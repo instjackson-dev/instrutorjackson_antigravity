@@ -260,7 +260,7 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center right;
+    object-position: right top;
 }
 
 /* Fallback for browsers that don't support object-fit */
