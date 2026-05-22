@@ -5,6 +5,24 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
+    // --- Force Hero Video Playback ---
+    const heroVideo = document.querySelector('.hero-video-element');
+    if (heroVideo) {
+        heroVideo.muted = true;
+        heroVideo.play().catch(err => {
+            console.log("Autoplay blocked, waiting for interaction: ", err);
+            const playOnInteraction = () => {
+                heroVideo.play().catch(() => {});
+                document.removeEventListener('click', playOnInteraction);
+                document.removeEventListener('touchstart', playOnInteraction);
+                document.removeEventListener('scroll', playOnInteraction);
+            };
+            document.addEventListener('click', playOnInteraction);
+            document.addEventListener('touchstart', playOnInteraction);
+            document.addEventListener('scroll', playOnInteraction);
+        });
+    }
+
     // --- Sticky Header on Scroll ---
     const header = document.querySelector('.header');
 

@@ -276,6 +276,7 @@ body {
     position: relative;
     width: 100%;
     max-width: 500px;
+    aspect-ratio: 3 / 4;
     border-radius: 16px;
     overflow: hidden;
     border: 2px solid rgba(253, 184, 19, 0.2);
@@ -293,7 +294,7 @@ body {
 .hero-video-element {
     width: 100%;
     display: block;
-    aspect-ratio: 16 / 9;
+    aspect-ratio: 3 / 4;
     object-fit: cover;
     background-color: #000;
 }

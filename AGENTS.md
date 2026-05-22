@@ -16,8 +16,8 @@
 - **Codex**
 
 ## Estado Atual
-- Reformulada a Hero Section em layout de duas colunas (Grid) no desktop, exibindo o vídeo de treinamento em proporção 16:9 completa à direita com glow tático e fallback resiliente (Gemini - 2026-05-22).
-- Adicionado suporte a vídeo de fundo (background video) na Hero Section com fallback para imagem estática (Gemini - 2026-05-22).
+- Corrigido o problema do vídeo da Hero Section não aparecer: ajustado aspect-ratio de 16:9 para 3:4 (formato original vertical do vídeo hero-bg.mp4), otimizado o tamanho do arquivo de 6.2MB para 916KB com FFmpeg para carregamento instantâneo, definido poster funcional extraído do vídeo (test_frame.png) e adicionado fallback de play programático via JavaScript para contornar bloqueios de autoplay do navegador (Gemini - 2026-05-22).
+- Reformulada a Hero Section em layout de duas colunas (Grid) no desktop, exibindo o vídeo de treinamento completo à direita com glow tático (Gemini - 2026-05-22).
 - Implementada a seção de Depoimentos em formato de carrossel dinâmico (com 6 vídeos do YouTube).
 - Implementada a seção de Prova Social (*Avatar Stack* com 5 fotos reais de alunos) na Hero Section do topo.
-- Último commit: `feat: reshape hero section into two-column layout showing entire video on the right` (22/05/2026).
+
