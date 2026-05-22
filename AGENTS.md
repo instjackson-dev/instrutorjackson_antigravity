@@ -16,6 +16,7 @@
 - **Codex**
 
 ## Estado Atual
+- Adicionado suporte a vídeo de fundo (background video) na Hero Section com fallback para imagem estática (Gemini - 2026-05-22).
 - Implementada a seção de Depoimentos em formato de carrossel dinâmico (com 6 vídeos do YouTube).
 - Implementada a seção de Prova Social (*Avatar Stack* com 5 fotos reais de alunos) na Hero Section do topo.
 - Último commit: `feat: add drone course FAQ, styling and images` (10/03/2026).

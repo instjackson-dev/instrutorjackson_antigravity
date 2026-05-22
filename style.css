@@ -246,6 +246,24 @@ body {
     overflow: hidden;
 }
 
+.hero-bg-video-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -2;
+    overflow: hidden;
+}
+
+.hero-bg-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center right;
+}
+
+/* Fallback for browsers that don't support object-fit */
 .hero-bg {
     position: absolute;
     top: 0;
