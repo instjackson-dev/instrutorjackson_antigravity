@@ -19,4 +19,4 @@
 - Adicionado suporte a vídeo de fundo (background video) na Hero Section com fallback para imagem estática (Gemini - 2026-05-22).
 - Implementada a seção de Depoimentos em formato de carrossel dinâmico (com 6 vídeos do YouTube).
 - Implementada a seção de Prova Social (*Avatar Stack* com 5 fotos reais de alunos) na Hero Section do topo.
-- Último commit: `feat: add video background to hero section with fallback` (22/05/2026).
+- Último commit: `style: adjust hero background video vertical alignment to right top to show faces` (22/05/2026).
