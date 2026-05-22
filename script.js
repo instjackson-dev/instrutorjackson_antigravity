@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- Scroll Animations ---
-    const animateElements = document.querySelectorAll('.module-card, .about-text, .audience-item, .pricing-card, .faq-item, .video-container');
+    const animateElements = document.querySelectorAll('.module-card, .about-text, .audience-item, .pricing-card, .faq-item, .video-container, .carousel-container');
 
     // Add initial class for animation
     animateElements.forEach(el => {
@@ -116,4 +116,136 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // --- Testimonials Carousel ---
+    const track = document.querySelector('.carousel-track');
+    const slides = Array.from(track.children);
+    const nextButton = document.querySelector('.carousel-control.next');
+    const prevButton = document.querySelector('.carousel-control.prev');
+    const dotsContainer = document.querySelector('.carousel-dots-container');
+    
+    let currentIndex = 0;
+
+    // Helper to calculate visible slides
+    const getVisibleSlidesCount = () => {
+        if (window.innerWidth >= 1024) return 3;
+        if (window.innerWidth >= 768) return 2;
+        return 1;
+    };
+
+    // Calculate maximum index we can slide to
+    const getMaxIndex = () => {
+        return Math.max(0, slides.length - getVisibleSlidesCount());
+    };
+
+    // Update track position and active indicators
+    const updateCarousel = () => {
+        if (slides.length === 0) return;
+        const slideWidth = slides[0].getBoundingClientRect().width;
+        // Limit index to valid bounds
+        currentIndex = Math.max(0, Math.min(currentIndex, getMaxIndex()));
+        
+        track.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
+        
+        // Update active dots
+        const dots = Array.from(dotsContainer.children);
+        dots.forEach((dot, index) => {
+            if (index === currentIndex) {
+                dot.classList.add('active');
+            } else {
+                dot.classList.remove('active');
+            }
+        });
+
+        // Toggle buttons state
+        if (currentIndex === 0) {
+            prevButton.style.opacity = '0.5';
+            prevButton.style.pointerEvents = 'none';
+        } else {
+            prevButton.style.opacity = '1';
+            prevButton.style.pointerEvents = 'auto';
+        }
+
+        if (currentIndex >= getMaxIndex()) {
+            nextButton.style.opacity = '0.5';
+            nextButton.style.pointerEvents = 'none';
+        } else {
+            nextButton.style.opacity = '1';
+            nextButton.style.pointerEvents = 'auto';
+        }
+    };
+
+    // Create dot indicators
+    const createDots = () => {
+        dotsContainer.innerHTML = '';
+        const maxDots = getMaxIndex() + 1;
+        for (let i = 0; i < maxDots; i++) {
+            const dot = document.createElement('button');
+            dot.classList.add('carousel-dot');
+            if (i === 0) dot.classList.add('active');
+            dot.setAttribute('aria-label', `Ir para depoimento ${i + 1}`);
+            dot.addEventListener('click', () => {
+                currentIndex = i;
+                updateCarousel();
+            });
+            dotsContainer.appendChild(dot);
+        }
+    };
+
+    // Initialize carousel if elements exist
+    if (track && slides.length > 0) {
+        createDots();
+        updateCarousel();
+
+        // Next Button Click
+        nextButton.addEventListener('click', () => {
+            if (currentIndex < getMaxIndex()) {
+                currentIndex++;
+                updateCarousel();
+            }
+        });
+
+        // Prev Button Click
+        prevButton.addEventListener('click', () => {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateCarousel();
+            }
+        });
+
+        // Handle Window Resize (recalculate slide width and dots)
+        window.addEventListener('resize', () => {
+            createDots();
+            updateCarousel();
+        });
+
+        // --- Touch Swipe Support for Mobile ---
+        let startX = 0;
+        let endX = 0;
+
+        track.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+        }, { passive: true });
+
+        track.addEventListener('touchmove', (e) => {
+            endX = e.touches[0].clientX;
+        }, { passive: true });
+
+        track.addEventListener('touchend', () => {
+            const threshold = 50; // Minimum swipe distance in px
+            if (startX - endX > threshold) {
+                // Swipe Left -> Next
+                if (currentIndex < getMaxIndex()) {
+                    currentIndex++;
+                    updateCarousel();
+                }
+            } else if (endX - startX > threshold) {
+                // Swipe Right -> Prev
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    updateCarousel();
+                }
+            }
+        });
+    }
 });
