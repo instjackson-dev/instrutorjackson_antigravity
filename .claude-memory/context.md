@@ -5,3 +5,4 @@ Sessões de desenvolvimento da Landing Page do Instrutor Jackson, cobrindo ajust
 
 ## Sessões
 - **2026-05-22**: Adicionado carrossel dinâmico com 6 depoimentos do YouTube (corrigindo erro de configuração 153 de referrer local) e Avatar Stack com 5 fotos e texto "500+ Alunos" na Hero Section. Sincronizado repositório e publicado no GitHub para deploy via Vercel.
+- **2026-05-23**: Implementadas melhorias de conversão com base na auditoria do site (badges de autoridade, headline de apelo inclusivo customizada pelo usuário, contador regressivo de vagas, trust lines, ancoragem de valor tática e isca digital de E-book sobre IA no livro de ocorrências via barra superior e modal de captura). Commitado e enviado para o GitHub.
