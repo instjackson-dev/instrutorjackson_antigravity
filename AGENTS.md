@@ -16,8 +16,14 @@
 - **Codex**
 
 ## Estado Atual
+- Implementadas melhorias profundas de conversão com base na auditoria do site (Gemini - 2026-05-23):
+  - Adicionados Badges de Autoridade ("23 anos · Polícia Civil PR", "PF", "RPA") no topo do Hero.
+  - Implementada a Headline customizada pelo usuário: "Policial. Vigilante. Escolta VIP. Todos na mesma rua — todos merecem o mesmo treinamento de quem veio dela."
+  - Adicionado contador regressivo evergreen para a data da próxima turma (14/06/2026) e Trust Lines no Hero.
+  - Criado o Lead Magnet (Barra superior fixa + Modal de Captura) para distribuir o E-book "Como usar Inteligência Artificial no Livro de Ocorrências", coletando Nome, E-mail e WhatsApp, com redirecionamento de download e abertura do chat de lead no WhatsApp.
+  - Criada a seção de Ancoragem de Valor comparando o "Preço do Improviso" versus o "Valor da Preparação" logo antes do cartão de preços.
 - Atualizado o link do Instagram no rodapé das páginas `index.html` e `instrutor.html` de `@ctaansv` para `@inteligenciaoperacional2.0` (Gemini - 2026-05-22).
-- Corrigido o problema do vídeo da Hero Section não aparecer: ajustado aspect-ratio de 16:9 para 3:4 (formato original vertical do vídeo hero-bg.mp4), otimizado o tamanho do arquivo de 6.2MB para 916KB com FFmpeg para carregamento instantâneo, definido poster funcional extraído do vídeo (test_frame.png) e adicionado fallback de play programático via JavaScript para contornar bloqueios de autoplay do navegador (Gemini - 2026-05-22).
+- Corrigido o problema do vídeo da Hero Section não aparecer: ajustado aspect-ratio de 16:9 para 3:4, otimizado arquivo para 916KB, poster funcional (test_frame.png) e fallback de play via JS (Gemini - 2026-05-22).
 - Reformulada a Hero Section em layout de duas colunas (Grid) no desktop, exibindo o vídeo de treinamento completo à direita com glow tático (Gemini - 2026-05-22).
 - Implementada a seção de Depoimentos em formato de carrossel dinâmico (com 6 vídeos do YouTube).
 - Implementada a seção de Prova Social (*Avatar Stack* com 5 fotos reais de alunos) na Hero Section do topo.

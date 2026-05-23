@@ -266,4 +266,116 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // --- Countdown Timer for 14th June 2026 ---
+    const countdownElement = document.getElementById('countdown-timer');
+    if (countdownElement) {
+        // Set target date: 14th June 2026 23:59:59 UTC-3 (America/Sao_Paulo)
+        const targetDate = new Date("June 14, 2026 23:59:59").getTime();
+
+        const updateCountdown = () => {
+            const now = new Date().getTime();
+            const difference = targetDate - now;
+
+            if (difference <= 0) {
+                countdownElement.innerHTML = "Inscrições Encerradas";
+                clearInterval(countdownInterval);
+                return;
+            }
+
+            const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+            // Format numbers to always show two digits
+            const formatNumber = (num) => String(num).padStart(2, '0');
+
+            countdownElement.innerHTML = `${formatNumber(days)}d ${formatNumber(hours)}h ${formatNumber(minutes)}m ${formatNumber(seconds)}s`;
+        };
+
+        updateCountdown();
+        const countdownInterval = setInterval(updateCountdown, 1000);
+    }
+
+    // --- Lead Capture Pop-up & Top Bar ---
+    const topLeadBar = document.getElementById('top-lead-bar');
+    const leadModal = document.getElementById('lead-modal');
+    const closeModalBtn = document.getElementById('close-modal-btn');
+    const leadForm = document.getElementById('lead-form');
+    const whatsappInput = document.getElementById('lead-whatsapp');
+
+    // Function to open modal
+    const openLeadModal = () => {
+        leadModal.classList.add('active');
+        sessionStorage.setItem('lead_modal_shown', 'true');
+    };
+
+    // Function to close modal
+    const closeLeadModal = () => {
+        leadModal.classList.remove('active');
+    };
+
+    if (topLeadBar && leadModal && closeModalBtn) {
+        // Click on top bar opens modal
+        topLeadBar.addEventListener('click', openLeadModal);
+
+        // Click on close button closes modal
+        closeModalBtn.addEventListener('click', closeLeadModal);
+
+        // Click outside the modal card closes modal
+        leadModal.addEventListener('click', (e) => {
+            if (e.target === leadModal) {
+                closeLeadModal();
+            }
+        });
+
+        // Trigger pop-up after 15 seconds if not shown in this session and not submitted
+        const hasShownThisSession = sessionStorage.getItem('lead_modal_shown');
+        const hasSubmitted = localStorage.getItem('lead_submitted');
+
+        if (!hasShownThisSession && !hasSubmitted) {
+            setTimeout(openLeadModal, 15000);
+        }
+    }
+
+    // Form input mask for WhatsApp: (XX) XXXXX-XXXX
+    if (whatsappInput) {
+        whatsappInput.addEventListener('input', (e) => {
+            let x = e.target.value.replace(/\D/g, '').match(/(\d{0,2})(\d{0,5})(\d{0,4})/);
+            e.target.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
+        });
+    }
+
+    // Handle Form Submission
+    if (leadForm) {
+        leadForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const name = document.getElementById('lead-name').value;
+            const email = document.getElementById('lead-email').value;
+            const whatsapp = whatsappInput.value;
+
+            // Save state
+            localStorage.setItem('lead_submitted', 'true');
+            localStorage.setItem('lead_name', name);
+            localStorage.setItem('lead_email', email);
+            localStorage.setItem('lead_whatsapp', whatsapp);
+
+            // Redirect to E-book link
+            const ebookUrl = "https://drive.google.com/file/d/1EoNLveUjusrXLRNni5tKxuI7CRiLhOCN/view?usp=sharing";
+            window.open(ebookUrl, '_blank');
+
+            // Send dynamic message to WhatsApp
+            const message = encodeURIComponent(`Olá Instrutor Jackson! Acabei de me cadastrar no site para baixar o E-book de IA no livro de ocorrências. Meu nome é ${name}.`);
+            const whatsappUrl = `https://wa.me/5541997538164?text=${message}`;
+            
+            // Wait slightly before redirecting/opening WhatsApp chat to ensure the PDF tab is spawned
+            setTimeout(() => {
+                window.location.href = whatsappUrl;
+            }, 800);
+
+            closeLeadModal();
+        });
+    }
 });
