@@ -331,8 +331,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const topLeadBar = document.getElementById('top-lead-bar');
     const leadModal = document.getElementById('lead-modal');
     const closeModalBtn = document.getElementById('close-modal-btn');
-    const leadForm = document.getElementById('lead-form');
-    const whatsappInput = document.getElementById('lead-whatsapp');
+    const whatsappInput = document.getElementById('ij-whatsapp');
 
     // Function to open modal
     const openLeadModal = () => {
@@ -371,68 +370,118 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Handle Form Submission with Bulletproof Fallbacks and Redirection
-    if (leadForm) {
-        leadForm.addEventListener('submit', (e) => {
-            e.preventDefault();
+    // Dynamic environment detection for n8n Webhook
+    const getWebhookUrl = () => {
+        const isLocal = window.location.hostname === 'localhost' || 
+                        window.location.hostname === '127.0.0.1' || 
+                        window.location.protocol === 'file:';
+        const path = isLocal ? '/webhook-test/ebook-lead' : '/webhook/ebook-lead';
+        return `https://n8n.vps7900.panel.icontainer.run${path}`;
+    };
 
-            const name = document.getElementById('lead-name').value;
-            const email = document.getElementById('lead-email').value;
-            const whatsapp = whatsappInput.value;
+    function ijLimpaWA(tel) {
+        return tel.replace(/\D/g, '');
+    }
 
-            // Save state in LocalStorage
-            localStorage.setItem('lead_submitted', 'true');
-            localStorage.setItem('lead_name', name);
-            localStorage.setItem('lead_email', email);
-            localStorage.setItem('lead_whatsapp', whatsapp);
+    async function ijEnviar() {
+        const btn = document.getElementById('ij-submit');
+        const err = document.getElementById('ij-error');
+        if (err) err.style.display = 'none';
 
-            // Redirect links
+        const nomeInput = document.getElementById('ij-nome');
+        const funcaoSelect = document.getElementById('ij-funcao');
+        const empresaInput = document.getElementById('ij-empresa');
+        const whatsappInput = document.getElementById('ij-whatsapp');
+        const emailInput = document.getElementById('ij-email');
+
+        const nome = nomeInput ? nomeInput.value.trim() : '';
+        const funcao = funcaoSelect ? funcaoSelect.value : '';
+        const empresa = empresaInput ? empresaInput.value.trim() : '';
+        const whatsappCleaned = whatsappInput ? ijLimpaWA(whatsappInput.value) : '';
+        const email = emailInput ? emailInput.value.trim() : '';
+
+        if (!nome || !funcao || whatsappCleaned.length < 10) {
+            if (err) {
+                err.textContent = 'Preencha nome, função e WhatsApp para continuar.';
+                err.style.display = 'block';
+            }
+            return;
+        }
+
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = 'Enviando...';
+        }
+
+        // Save state in LocalStorage for later sessions
+        localStorage.setItem('lead_submitted', 'true');
+        localStorage.setItem('lead_name', nome);
+        localStorage.setItem('lead_email', email);
+        localStorage.setItem('lead_whatsapp', whatsappInput ? whatsappInput.value : '');
+
+        const webhookUrl = getWebhookUrl();
+        console.log("Enviando lead para webhook:", webhookUrl);
+
+        try {
+            const res = await fetch(webhookUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    nome,
+                    funcao,
+                    empresa,
+                    whatsapp: '55' + whatsappCleaned,
+                    email,
+                    origem: 'site-instrutorjackson',
+                    data: new Date().toISOString()
+                })
+            });
+
+            if (!res.ok) throw new Error('Erro ' + res.status);
+
+            // Hide form body and show success
+            const formBody = document.getElementById('ij-form-body');
+            const successBody = document.getElementById('ij-success');
+            if (formBody) formBody.style.display = 'none';
+            if (successBody) successBody.style.display = 'block';
+
+            // Prepare success state actions
             const ebookUrl = "https://drive.google.com/file/d/1EoNLveUjusrXLRNni5tKxuI7CRiLhOCN/view?usp=sharing";
-            const message = encodeURIComponent(`Olá Instrutor Jackson! Acabei de me cadastrar no site para baixar o E-book de IA no livro de ocorrências. Meu nome é ${name}.`);
+            const message = encodeURIComponent(`Olá Instrutor Jackson! Acabei de me cadastrar no site para baixar o E-book de IA no livro de ocorrências. Meu nome é ${nome}.`);
             const whatsappUrl = `https://wa.me/5541997538164?text=${message}`;
 
-            // 1. Try to open the E-book PDF in a new tab (catches block errors)
+            // Set the link on the success state whatsapp button
+            const waBtn = document.getElementById('ij-wa-btn');
+            if (waBtn) {
+                waBtn.href = whatsappUrl;
+            }
+
+            // Try to trigger automatic PDF download
             try {
                 window.open(ebookUrl, '_blank');
-            } catch (err) {
-                console.log("Popup blocked:", err);
+            } catch (popErr) {
+                console.log("Popup blocked automatically, user can click PDF button:", popErr);
             }
 
-            // 2. Change modal card to a clean Success State showing buttons to prevent getting stuck
-            const modalOverlay = document.getElementById('lead-modal');
-            const modalCard = modalOverlay ? modalOverlay.querySelector('.lead-modal-card') : null;
-            if (modalCard) {
-                modalCard.innerHTML = `
-                    <button class="lead-modal-close" id="close-modal-btn" aria-label="Fechar Modal">&times;</button>
-                    <div class="lead-modal-header" style="margin-bottom: 20px; text-align: center;">
-                        <i class="fas fa-check-circle text-success" style="font-size: 3.5rem; margin-bottom: 15px; color: #4ade80;"></i>
-                        <h3 style="color: #fff; font-family: var(--font-heading); font-size: 1.5rem; margin-bottom: 10px;">Cadastro Realizado!</h3>
-                        <p style="font-size: 0.95rem; color: var(--text-muted); line-height: 1.4;">Seu acesso ao E-book gratuito foi liberado com sucesso.</p>
-                    </div>
-                    <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 25px;">
-                        <a href="${ebookUrl}" target="_blank" class="btn btn-primary" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;">
-                            <i class="fas fa-file-pdf"></i> BAIXAR E-BOOK PDF
-                        </a>
-                        <a href="${whatsappUrl}" class="btn btn-outline" style="width: 100%; border-color: var(--gold-primary); color: var(--gold-primary); display: flex; align-items: center; justify-content: center; gap: 10px;">
-                            <i class="fab fa-whatsapp"></i> CONVERSAR NO WHATSAPP
-                        </a>
-                    </div>
-                    <p style="font-size: 0.75rem; color: var(--text-muted); text-align: center; margin-top: 20px;">
-                        Caso o download não tenha iniciado automaticamente, clique no botão de baixar acima.
-                    </p>
-                `;
-
-                // Re-bind close event for the new close button
-                const newCloseBtn = document.getElementById('close-modal-btn');
-                if (newCloseBtn) {
-                    newCloseBtn.addEventListener('click', closeLeadModal);
-                }
-            }
-
-            // 3. Delay redirecting the main tab to WhatsApp to ensure new tab opens and local storage is saved
+            // Delay redirecting the main tab to WhatsApp to ensure new tab opens and local storage is saved
             setTimeout(() => {
                 window.location.href = whatsappUrl;
-            }, 1000);
-        });
+            }, 1500);
+
+        } catch (e) {
+            console.error("Erro no envio:", e);
+            if (err) {
+                err.textContent = 'Ocorreu um erro. Tente novamente ou entre em contato pelo WhatsApp.';
+                err.style.display = 'block';
+            }
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = 'BAIXAR E-BOOK GRÁTIS <i class="fas fa-download"></i>';
+            }
+        }
     }
+
+    // Make functions available globally so they can be triggered from inline HTML handlers
+    window.ijEnviar = ijEnviar;
+    window.ijLimpaWA = ijLimpaWA;
 });

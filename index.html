@@ -610,38 +610,92 @@
     <div id="lead-modal" class="lead-modal-overlay">
         <div class="lead-modal-card">
             <button class="lead-modal-close" id="close-modal-btn" aria-label="Fechar Modal">&times;</button>
-            <div class="lead-modal-header">
-                <i class="fas fa-book-open modal-icon"></i>
-                <h3>Baixe o E-book Gratuitamente</h3>
-                <p><strong>Como usar Inteligência Artificial para registro no livro de ocorrências.</strong> Aprenda o protocolo tático de registro blindado.</p>
+            
+            <div id="ij-form-body">
+                <div class="lead-modal-header">
+                    <i class="fas fa-book-open modal-icon"></i>
+                    <h3>Baixe o E-book Gratuitamente</h3>
+                    <p><strong>Como usar Inteligência Artificial para registro no livro de ocorrências.</strong> Aprenda o protocolo tático de registro blindado.</p>
+                </div>
+                <div class="lead-modal-form">
+                    <div class="form-group">
+                        <label for="ij-nome">Nome completo *</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="ij-nome" placeholder="Seu nome completo" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row-grid">
+                        <div class="form-group">
+                            <label for="ij-funcao">Função *</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-briefcase" style="padding-left: 2px;"></i>
+                                <select id="ij-funcao" required>
+                                    <option value="">Selecione</option>
+                                    <option value="Vigilante Patrimonial">Vigilante Patrimonial</option>
+                                    <option value="Supervisor de Segurança">Supervisor de Segurança</option>
+                                    <option value="Policial Civil">Policial Civil</option>
+                                    <option value="Policial Militar">Policial Militar</option>
+                                    <option value="Escolta VIP">Escolta VIP</option>
+                                    <option value="Motorista Executivo">Motorista Executivo</option>
+                                    <option value="Agente Federal">Agente Federal</option>
+                                    <option value="Outro">Outro</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="ij-empresa">Empresa / Órgão</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-building"></i>
+                                <input type="text" id="ij-empresa" placeholder="Ex: Grupo Veper">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ij-whatsapp">WhatsApp *</label>
+                        <div class="input-wrapper">
+                            <i class="fab fa-whatsapp"></i>
+                            <input type="tel" id="ij-whatsapp" placeholder="(41) 99999-9999" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ij-email">E-mail</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="ij-email" placeholder="seu@email.com">
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-primary btn-block" id="ij-submit" onclick="ijEnviar()">
+                        BAIXAR E-BOOK GRÁTIS <i class="fas fa-download"></i>
+                    </button>
+                    
+                    <div class="ij-error" id="ij-error"></div>
+                </div>
+                <p class="modal-privacy"><i class="fas fa-shield-alt"></i> Seus dados estão seguros e não enviamos spam.</p>
             </div>
-            <form id="lead-form" class="lead-modal-form">
-                <div class="form-group">
-                    <label for="lead-name">Seu Nome Completo</label>
-                    <div class="input-wrapper">
-                        <i class="fas fa-user"></i>
-                        <input type="text" id="lead-name" placeholder="Ex: João Silva" required>
-                    </div>
+
+            <div class="ij-success" id="ij-success" style="display: none;">
+                <div class="lead-modal-header" style="margin-bottom: 20px; text-align: center;">
+                    <i class="fas fa-check-circle text-success" style="font-size: 3.5rem; margin-bottom: 15px; color: #4ade80;"></i>
+                    <h3 style="color: #fff; font-family: var(--font-heading); font-size: 1.5rem; margin-bottom: 10px;">E-book Liberado!</h3>
+                    <p style="font-size: 0.95rem; color: var(--text-muted); line-height: 1.4;">Você receberá o material pelo WhatsApp em instantes. Caso o download não inicie, use o botão abaixo.</p>
                 </div>
-                <div class="form-group">
-                    <label for="lead-email">Seu Melhor E-mail</label>
-                    <div class="input-wrapper">
-                        <i class="fas fa-envelope"></i>
-                        <input type="email" id="lead-email" placeholder="Ex: joao@email.com" required>
-                    </div>
+                <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 25px;">
+                    <a href="https://drive.google.com/file/d/1EoNLveUjusrXLRNni5tKxuI7CRiLhOCN/view?usp=sharing" target="_blank" class="btn btn-primary" id="ij-download-btn" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                        <i class="fas fa-file-pdf"></i> BAIXAR E-BOOK PDF
+                    </a>
+                    <a href="#" target="_blank" class="btn btn-outline" id="ij-wa-btn" style="width: 100%; border-color: var(--gold-primary); color: var(--gold-primary); display: flex; align-items: center; justify-content: center; gap: 10px;">
+                        <i class="fab fa-whatsapp"></i> CONVERSAR NO WHATSAPP
+                    </a>
                 </div>
-                <div class="form-group">
-                    <label for="lead-whatsapp">Seu WhatsApp (com DDD)</label>
-                    <div class="input-wrapper">
-                        <i class="fab fa-whatsapp"></i>
-                        <input type="tel" id="lead-whatsapp" placeholder="(41) 99999-9999" required>
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-primary btn-block">
-                    BAIXAR E-BOOK GRÁTIS <i class="fas fa-download"></i>
-                </button>
-            </form>
-            <p class="modal-privacy"><i class="fas fa-shield-alt"></i> Seus dados estão seguros e não enviamos spam.</p>
+                <p style="font-size: 0.75rem; color: var(--text-muted); text-align: center; margin-top: 20px;">
+                    Salve o número na agenda para garantir o recebimento das mensagens.
+                </p>
+            </div>
         </div>
     </div>
 

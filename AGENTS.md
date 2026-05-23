@@ -16,6 +16,7 @@
 - **Codex**
 
 ## Estado Atual
+- Integrado o formulário de 5 campos de captura do E-book com o webhook do n8n (`https://n8n.vps7900.panel.icontainer.run/webhook/ebook-lead`), com detecção dinâmica de ambiente local (`/webhook-test`) e produção, tratamento de máscara/número de WhatsApp e botões pós-envio à prova de pop-up blocker (Gemini - 2026-05-23).
 - Substituída a imagem da seção "Eleve o nível da sua Operação" pela nova versão WebP enviada pelo usuário via Google Drive (Gemini - 2026-05-23).
 - Implementadas melhorias profundas de conversão com base na auditoria do site (Gemini - 2026-05-23):
   - Adicionado alerta de escassez/urgência ("APENAS 7 VAGAS RESTANTES") no cartão de preços sincronizado dinamicamente com o lote atual (Gemini - 2026-05-23).

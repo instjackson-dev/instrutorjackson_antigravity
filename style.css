@@ -1675,3 +1675,59 @@ body {
 .pricing-urgency strong {
     color: var(--gold-primary);
 }
+
+/* --- E-book Lead Form Custom Integrations --- */
+.form-row-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.lead-modal-form select {
+    width: 100%;
+    padding: 12px 15px 12px 45px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    color: var(--white);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    transition: var(--transition-normal);
+    appearance: none;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 15px;
+}
+
+.lead-modal-form select:focus {
+    outline: none;
+    border-color: var(--gold-primary);
+    background-color: rgba(253, 184, 19, 0.02);
+    box-shadow: 0 0 10px rgba(253, 184, 19, 0.15);
+}
+
+.lead-modal-form select option {
+    background: #050608;
+    color: var(--white);
+}
+
+.ij-error {
+    display: none;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 6px;
+    padding: 12px 15px;
+    font-size: 0.85rem;
+    color: #ef4444;
+    margin-top: 15px;
+    text-align: center;
+}
+
+@media (max-width: 576px) {
+    .form-row-grid {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+}
