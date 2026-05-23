@@ -17,7 +17,7 @@
 
 ## Estado Atual
 - Implementadas melhorias profundas de conversão com base na auditoria do site (Gemini - 2026-05-23):
-  - Adicionados Badges de Autoridade ("23 anos · Polícia Civil PR", "PF", "RPA") no topo do Hero.
+  - Adicionados Badges de Autoridade ("23 anos · Polícia Civil PR", "PF", "RPA") empilhados verticalmente acima do vídeo no Hero (Gemini - 2026-05-23).
   - Implementada a Headline customizada pelo usuário: "Policial. Vigilante. Escolta VIP. Todos na mesma rua — todos merecem o mesmo treinamento de quem veio dela."
   - Adicionado contador regressivo evergreen para a data da próxima turma (14/06/2026) e Trust Lines no Hero.
   - Criado o Lead Magnet (Barra superior fixa + Modal de Captura) para distribuir o E-book "Como usar Inteligência Artificial no Livro de Ocorrências", coletando Nome, E-mail e WhatsApp, com redirecionamento de download e abertura do chat de lead no WhatsApp.
