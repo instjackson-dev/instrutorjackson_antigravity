@@ -267,15 +267,39 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Countdown Timer for 14th June 2026 ---
+    // --- Evergreen Countdown Timer (Calculates to the 14th of the current/next month) ---
     const countdownElement = document.getElementById('countdown-timer');
     if (countdownElement) {
-        // Set target date: 14th June 2026 23:59:59 UTC-3 (America/Sao_Paulo)
-        const targetDate = new Date("June 14, 2026 23:59:59").getTime();
+        let targetDay = 14;
+        let targetMonth = 5; // June (0-indexed: 5 = June)
+        let targetYear = 2026;
+        
+        let targetDateObj = new Date(targetYear, targetMonth, targetDay, 23, 59, 59);
+        let now = new Date();
+
+        // If target date has passed, advance to the 14th of the next month automatically
+        while (now.getTime() > targetDateObj.getTime()) {
+            targetMonth++;
+            if (targetMonth > 11) {
+                targetMonth = 0;
+                targetYear++;
+            }
+            targetDateObj = new Date(targetYear, targetMonth, targetDay, 23, 59, 59);
+        }
+
+        // Dynamically update the Month Name on the HTML page to keep the header evergreen
+        const monthNames = [
+            "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+            "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+        ];
+        const urgencyTextElement = document.querySelector('.urgency-bar strong');
+        if (urgencyTextElement) {
+            urgencyTextElement.textContent = `${targetDay} de ${monthNames[targetMonth]}`;
+        }
 
         const updateCountdown = () => {
-            const now = new Date().getTime();
-            const difference = targetDate - now;
+            const currentTime = new Date().getTime();
+            const difference = targetDateObj.getTime() - currentTime;
 
             if (difference <= 0) {
                 countdownElement.innerHTML = "Inscrições Encerradas";
@@ -288,7 +312,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
-            // Format numbers to always show two digits
             const formatNumber = (num) => String(num).padStart(2, '0');
 
             countdownElement.innerHTML = `${formatNumber(days)}d ${formatNumber(hours)}h ${formatNumber(minutes)}m ${formatNumber(seconds)}s`;
@@ -317,20 +340,15 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     if (topLeadBar && leadModal && closeModalBtn) {
-        // Click on top bar opens modal
         topLeadBar.addEventListener('click', openLeadModal);
-
-        // Click on close button closes modal
         closeModalBtn.addEventListener('click', closeLeadModal);
 
-        // Click outside the modal card closes modal
         leadModal.addEventListener('click', (e) => {
             if (e.target === leadModal) {
                 closeLeadModal();
             }
         });
 
-        // Trigger pop-up after 15 seconds if not shown in this session and not submitted
         const hasShownThisSession = sessionStorage.getItem('lead_modal_shown');
         const hasSubmitted = localStorage.getItem('lead_submitted');
 
@@ -347,7 +365,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Handle Form Submission
+    // Handle Form Submission with Bulletproof Fallbacks and Redirection
     if (leadForm) {
         leadForm.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -356,26 +374,59 @@ document.addEventListener('DOMContentLoaded', () => {
             const email = document.getElementById('lead-email').value;
             const whatsapp = whatsappInput.value;
 
-            // Save state
+            // Save state in LocalStorage
             localStorage.setItem('lead_submitted', 'true');
             localStorage.setItem('lead_name', name);
             localStorage.setItem('lead_email', email);
             localStorage.setItem('lead_whatsapp', whatsapp);
 
-            // Redirect to E-book link
+            // Redirect links
             const ebookUrl = "https://drive.google.com/file/d/1EoNLveUjusrXLRNni5tKxuI7CRiLhOCN/view?usp=sharing";
-            window.open(ebookUrl, '_blank');
-
-            // Send dynamic message to WhatsApp
             const message = encodeURIComponent(`Olá Instrutor Jackson! Acabei de me cadastrar no site para baixar o E-book de IA no livro de ocorrências. Meu nome é ${name}.`);
             const whatsappUrl = `https://wa.me/5541997538164?text=${message}`;
-            
-            // Wait slightly before redirecting/opening WhatsApp chat to ensure the PDF tab is spawned
+
+            // 1. Try to open the E-book PDF in a new tab (catches block errors)
+            try {
+                window.open(ebookUrl, '_blank');
+            } catch (err) {
+                console.log("Popup blocked:", err);
+            }
+
+            // 2. Change modal card to a clean Success State showing buttons to prevent getting stuck
+            const modalOverlay = document.getElementById('lead-modal');
+            const modalCard = modalOverlay ? modalOverlay.querySelector('.lead-modal-card') : null;
+            if (modalCard) {
+                modalCard.innerHTML = `
+                    <button class="lead-modal-close" id="close-modal-btn" aria-label="Fechar Modal">&times;</button>
+                    <div class="lead-modal-header" style="margin-bottom: 20px; text-align: center;">
+                        <i class="fas fa-check-circle text-success" style="font-size: 3.5rem; margin-bottom: 15px; color: #4ade80;"></i>
+                        <h3 style="color: #fff; font-family: var(--font-heading); font-size: 1.5rem; margin-bottom: 10px;">Cadastro Realizado!</h3>
+                        <p style="font-size: 0.95rem; color: var(--text-muted); line-height: 1.4;">Seu acesso ao E-book gratuito foi liberado com sucesso.</p>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 25px;">
+                        <a href="${ebookUrl}" target="_blank" class="btn btn-primary" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                            <i class="fas fa-file-pdf"></i> BAIXAR E-BOOK PDF
+                        </a>
+                        <a href="${whatsappUrl}" class="btn btn-outline" style="width: 100%; border-color: var(--gold-primary); color: var(--gold-primary); display: flex; align-items: center; justify-content: center; gap: 10px;">
+                            <i class="fab fa-whatsapp"></i> CONVERSAR NO WHATSAPP
+                        </a>
+                    </div>
+                    <p style="font-size: 0.75rem; color: var(--text-muted); text-align: center; margin-top: 20px;">
+                        Caso o download não tenha iniciado automaticamente, clique no botão de baixar acima.
+                    </p>
+                `;
+
+                // Re-bind close event for the new close button
+                const newCloseBtn = document.getElementById('close-modal-btn');
+                if (newCloseBtn) {
+                    newCloseBtn.addEventListener('click', closeLeadModal);
+                }
+            }
+
+            // 3. Delay redirecting the main tab to WhatsApp to ensure new tab opens and local storage is saved
             setTimeout(() => {
                 window.location.href = whatsappUrl;
-            }, 800);
-
-            closeLeadModal();
+            }, 1000);
         });
     }
 });
