@@ -17,7 +17,7 @@
 
 ## Estado Atual
 - Implementadas melhorias profundas de conversão com base na auditoria do site (Gemini - 2026-05-23):
-  - Adicionados Badges de Autoridade ("23 anos · Polícia Civil PR", "PF", "RPA", "Segurança do Trabalho") empilhados verticalmente acima do vídeo no Hero e alinhados à altura da primeira linha do título principal (Gemini - 2026-05-23).
+  - Adicionados Badges de Autoridade ("23 anos · Polícia Civil PR", "PF", "RPA", "Tecnólogo de Seg. do Trabalho", "Técnico Seg. do Trabalho") empilhados verticalmente acima do vídeo no Hero e alinhados à altura da primeira linha do título principal (Gemini - 2026-05-23).
   - Implementada a Headline customizada pelo usuário: "Policial. Vigilante. Escolta VIP. Todos na mesma rua — todos merecem o mesmo treinamento de quem veio dela."
   - Adicionado contador regressivo autônomo (evergreen) para o dia 14 de cada mês (avançando automaticamente) e Trust Lines no Hero (Gemini - 2026-05-23).
   - Implementado tratamento à prova de falhas no envio do formulário, exibindo tela de sucesso com botões diretos de download e WhatsApp para evitar bloqueios de pop-up do navegador (Gemini - 2026-05-23).
