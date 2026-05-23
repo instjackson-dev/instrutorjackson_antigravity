@@ -19,7 +19,8 @@
 - Implementadas melhorias profundas de conversão com base na auditoria do site (Gemini - 2026-05-23):
   - Adicionados Badges de Autoridade ("23 anos · Polícia Civil PR", "PF", "RPA") empilhados verticalmente acima do vídeo no Hero e alinhados à altura da primeira linha do título principal (Gemini - 2026-05-23).
   - Implementada a Headline customizada pelo usuário: "Policial. Vigilante. Escolta VIP. Todos na mesma rua — todos merecem o mesmo treinamento de quem veio dela."
-  - Adicionado contador regressivo evergreen para a data da próxima turma (14/06/2026) e Trust Lines no Hero.
+  - Adicionado contador regressivo autônomo (evergreen) para o dia 14 de cada mês (avançando automaticamente) e Trust Lines no Hero (Gemini - 2026-05-23).
+  - Implementado tratamento à prova de falhas no envio do formulário, exibindo tela de sucesso com botões diretos de download e WhatsApp para evitar bloqueios de pop-up do navegador (Gemini - 2026-05-23).
   - Criado o Lead Magnet (Barra superior fixa + Modal de Captura) para distribuir o E-book "Como usar Inteligência Artificial no Livro de Ocorrências", coletando Nome, E-mail e WhatsApp, com redirecionamento de download e abertura do chat de lead no WhatsApp.
   - Criada a seção de Ancoragem de Valor comparando o "Preço do Improviso" versus o "Valor da Preparação" logo antes do cartão de preços.
 - Atualizado o link do Instagram no rodapé das páginas `index.html` e `instrutor.html` de `@ctaansv` para `@inteligenciaoperacional2.0` (Gemini - 2026-05-22).
