@@ -297,6 +297,12 @@ document.addEventListener('DOMContentLoaded', () => {
             urgencyTextElement.textContent = `${targetDay} de ${monthNames[targetMonth]}`;
         }
 
+        const pricingBatchDate = document.getElementById('pricing-batch-date');
+        if (pricingBatchDate) {
+            const formatNumber = (num) => String(num).padStart(2, '0');
+            pricingBatchDate.textContent = `${formatNumber(targetDay)}/${formatNumber(targetMonth + 1)}`;
+        }
+
         const updateCountdown = () => {
             const currentTime = new Date().getTime();
             const difference = targetDateObj.getTime() - currentTime;
