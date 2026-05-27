@@ -790,7 +790,7 @@ body {
 
 .company-card {
     background: var(--bg-card);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(var(--gold-primary-rgb), 0.2);
     padding: 20px 15px;
     border-radius: 8px;
     text-align: center;
@@ -799,17 +799,18 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 90px;
+    box-shadow: 0 0 10px rgba(var(--gold-primary-rgb), 0.15);
 }
 
 .company-card:hover {
     transform: translateY(-5px);
-    border-color: rgba(var(--gold-primary-rgb), 0.3);
-    box-shadow: var(--shadow-card);
+    border-color: var(--gold-primary);
+    box-shadow: 0 0 25px rgba(var(--gold-primary-rgb), 0.6);
 }
 
 .company-card h3 {
     font-family: var(--font-heading);
-    color: var(--text-muted);
+    color: var(--white);
     font-size: 1.1rem;
     font-weight: 700;
     margin: 0;
@@ -817,7 +818,8 @@ body {
 }
 
 .company-card:hover h3 {
-    color: var(--gold-primary);
+    color: var(--white);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
 /* Pricing Section */
