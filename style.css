@@ -263,7 +263,7 @@ body {
     animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.hero-video-column {
+.hero-image-column {
     position: relative;
     width: 100%;
     display: flex;
@@ -274,7 +274,7 @@ body {
     animation: heroFadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.hero-video-wrapper {
+.hero-image-wrapper {
     position: relative;
     width: 100%;
     max-width: 500px;
@@ -287,13 +287,13 @@ body {
     background: #000;
 }
 
-.hero-video-wrapper:hover {
+.hero-image-wrapper:hover {
     border-color: var(--gold-primary);
     box-shadow: 0 20px 45px rgba(0, 0, 0, 0.8), var(--glow-gold-strong);
     transform: translateY(-5px);
 }
 
-.hero-video-element {
+.hero-image-element {
     width: 100%;
     display: block;
     aspect-ratio: 3 / 4;
@@ -1130,7 +1130,7 @@ body {
         gap: 50px;
     }
 
-    .hero-video-column {
+    .hero-image-column {
         align-self: center;
     }
 
