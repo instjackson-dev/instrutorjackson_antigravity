@@ -20,6 +20,14 @@
 </head>
 
 <body>
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('tactical-theme');
+            if (savedTheme && savedTheme !== 'gold') {
+                document.body.classList.add('theme-' + savedTheme);
+            }
+        })();
+    </script>
 
     <!-- Top Lead Magnet Bar -->
     <div id="top-lead-bar" class="top-lead-bar">
@@ -66,7 +74,7 @@
         <div class="container">
 
             <div class="content-block about-container" style="margin-bottom: 80px;">
-                <div class="about-text">
+                <div class="about-text reveal-left">
                     <p><strong>Jackson Renato</strong> é Investigador de Polícia Civil do Paraná há 23 anos e instrutor
                         licenciado pela Polícia Federal na área de Segurança Privada há 16 anos, com foco em Uso
                         Progressivo da Força, táticas de abordagem e Gerenciamento de Crises.</p>
@@ -75,7 +83,7 @@
                     <p class="highlight" style="font-size: 1.2rem; font-weight: 600; margin-top:20px;">Se a sua equipe
                         treina certo, trabalha mais segura.<br>Se não treina, trabalha na sorte. E sorte é cara.</p>
                 </div>
-                <div class="about-image-wrapper">
+                <div class="about-image-wrapper reveal-right">
                     <div class="image-glow"></div>
                     <!-- IMAGEM 1 -->
                     <img src="assets/images/instrutor_img1.png" alt="Instrutor Jackson demonstrando técnica"
@@ -83,7 +91,7 @@
                 </div>
             </div>
 
-            <div class="content-block"
+            <div class="content-block reveal-zoom"
                 style="margin-bottom: 80px; background: var(--bg-card); padding: 50px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
                 <h2
                     style="font-family: var(--font-heading); color: var(--white); margin-bottom: 25px; font-size: 2rem;">
@@ -103,13 +111,13 @@
             </div>
 
             <div class="content-block about-container" style="margin-bottom: 80px;">
-                <div class="about-image-wrapper">
+                <div class="about-image-wrapper reveal-left">
                     <div class="image-glow"></div>
                     <!-- IMAGEM 2 -->
                     <img src="assets/images/instrutor_img2.png" alt="Técnicas de imobilização e controle"
                         class="about-img" style="background: transparent;">
                 </div>
-                <div class="about-text">
+                <div class="about-text reveal-right">
                     <h2
                         style="font-family: var(--font-heading); color: var(--white); margin-bottom: 25px; font-size: 2rem;">
                         O que você ganha <span class="highlight">(na prática)</span></h2>
@@ -133,8 +141,8 @@
                 </div>
             </div>
 
-            <div class="modules-grid" style="margin-bottom: 80px;">
-                <div class="module-card">
+            <div class="modules-grid stagger-container" style="margin-bottom: 80px;">
+                <div class="module-card stagger-item">
                     <i class="fas fa-shield-alt card-icon"></i>
                     <h3>Táticas de Abordagens Avançadas</h3>
                     <ul style="color: var(--text-muted); padding-left: 20px; font-size: 0.95rem;">
@@ -143,7 +151,7 @@
                         <li>Procedimento em ocorrências com 1 ou mais envolvidos, foco em segurança e coordenação.</li>
                     </ul>
                 </div>
-                <div class="module-card">
+                <div class="module-card stagger-item">
                     <i class="fas fa-user-shield card-icon"></i>
                     <h3>Noções de Segurança VIP</h3>
                     <ul style="color: var(--text-muted); padding-left: 20px; font-size: 0.95rem;">
@@ -152,7 +160,7 @@
                         <li>Procedimentos organizados para proteção individual ou de múltiplas pessoas.</li>
                     </ul>
                 </div>
-                <div class="module-card">
+                <div class="module-card stagger-item">
                     <i class="fas fa-hands-bound card-icon"></i>
                     <h3>Imobilizações e Controle</h3>
                     <ul style="color: var(--text-muted); padding-left: 20px; font-size: 0.95rem;">
@@ -161,7 +169,7 @@
                         <li>Erros comuns que geram fuga, lesão e acusação — e como evitar.</li>
                     </ul>
                 </div>
-                <div class="module-card">
+                <div class="module-card stagger-item">
                     <i class="fas fa-balance-scale card-icon"></i>
                     <h3>Uso Progressivo da Força</h3>
                     <ul style="color: var(--text-muted); padding-left: 20px; font-size: 0.95rem;">
@@ -169,7 +177,7 @@
                         <li>Padronização para a equipe agir igual.</li>
                     </ul>
                 </div>
-                <div class="module-card" style="grid-column: 1 / -1;">
+                <div class="module-card stagger-item" style="grid-column: 1 / -1;">
                     <i class="fas fa-clipboard-check card-icon" style="display:inline-block; margin-right: 15px;"></i>
                     <h3 style="display:inline-block;">Procedimentos de Posto e Resposta a Ocorrências</h3>
                     <ul style="color: var(--text-muted); padding-left: 20px; font-size: 0.95rem; margin-top: 15px;">
@@ -185,7 +193,7 @@
             </div>
 
             <div class="content-block about-container" style="margin-bottom: 80px;">
-                <div class="about-text">
+                <div class="about-text reveal-left">
                     <h2
                         style="font-family: var(--font-heading); color: var(--white); margin-bottom: 25px; font-size: 2rem;">
                         A diferença do <span class="highlight">Método Jackson</span></h2>
@@ -205,7 +213,7 @@
                     <p style="color: var(--gold-primary); font-weight:600; margin-top:20px;">Isso vira cultura. E
                         cultura é o que segura a operação quando o estresse sobe.</p>
                 </div>
-                <div class="about-image-wrapper">
+                <div class="about-image-wrapper reveal-right">
                     <div class="image-glow"></div>
                     <!-- IMAGEM 3 -->
                     <img src="assets/images/instrutor_img3.png" alt="Instrutor Jackson aplicando treinamento"
@@ -213,7 +221,7 @@
                 </div>
             </div>
 
-            <div class="content-block"
+            <div class="content-block reveal-zoom"
                 style="margin-bottom: 80px; text-align: center; max-width: 800px; margin-left: auto; margin-right: auto;">
                 <h2
                     style="font-family: var(--font-heading); color: var(--white); margin-bottom: 25px; font-size: 2rem;">
@@ -250,8 +258,8 @@
                 <p style="text-align: center; color: var(--text-muted); margin-bottom: 40px;">Treinamentos sob medida,
                     conforme a sua realidade:</p>
 
-                <div class="audience-grid" style="margin-top: 0;">
-                    <div class="audience-item"
+                <div class="audience-grid stagger-container" style="margin-top: 0;">
+                    <div class="audience-item stagger-item"
                         style="background: var(--bg-card); border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
                         <i class="fas fa-building highlight-icon" style="font-size: 2.5rem; margin-bottom: 15px;"></i>
                         <h4>Treinamento para Vigilância Patrimonial</h4>
@@ -263,7 +271,7 @@
                             <li>Comunicação e escalonamento</li>
                         </ul>
                     </div>
-                    <div class="audience-item"
+                    <div class="audience-item stagger-item"
                         style="background: var(--bg-card); border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
                         <i class="fas fa-crosshairs highlight-icon" style="font-size: 2.5rem; margin-bottom: 15px;"></i>
                         <h4>Abordagem e Conduta Operacional</h4>
@@ -275,7 +283,7 @@
                             <li>Erros que geram problema</li>
                         </ul>
                     </div>
-                    <div class="audience-item"
+                    <div class="audience-item stagger-item"
                         style="background: var(--bg-card); border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
                         <i class="fas fa-hand-paper highlight-icon" style="font-size: 2.5rem; margin-bottom: 15px;"></i>
                         <h4>Uso Progressivo da Força</h4>
@@ -286,7 +294,7 @@
                             <li>Padronização por equipe</li>
                         </ul>
                     </div>
-                    <div class="audience-item"
+                    <div class="audience-item stagger-item"
                         style="background: var(--bg-card); border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); grid-column: 1 / -1; max-width: 400px; margin: 0 auto;">
                         <i class="fas fa-exclamation-triangle highlight-icon"
                             style="font-size: 2.5rem; margin-bottom: 15px;"></i>
@@ -304,7 +312,7 @@
                     ocorrências.</p>
             </div>
 
-            <div class="pricing-card" style="margin-bottom: 40px;">
+            <div class="pricing-card reveal-zoom" style="margin-bottom: 40px;">
                 <div class="pricing-header">
                     <h2>Como funciona a <span class="highlight">contratação</span></h2>
                     <p>Simples e eficiente</p>
@@ -471,6 +479,22 @@
                 <p style="font-size: 0.75rem; color: var(--text-muted); text-align: center; margin-top: 20px;">
                     Salve o número na agenda para garantir o recebimento das mensagens.
                 </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Theme Customizer -->
+    <div class="theme-customizer" id="theme-customizer">
+        <button class="theme-customizer-toggle" id="theme-toggle-btn" aria-label="Alterar Cor de Destaque">
+            <i class="fas fa-palette"></i>
+        </button>
+        <div class="theme-customizer-panel">
+            <h4>Destaque Tático</h4>
+            <div class="theme-options">
+                <button class="theme-opt-btn active" data-theme="gold" style="background-color: #FDB813;" title="Dourado Operacional"></button>
+                <button class="theme-opt-btn" data-theme="red" style="background-color: #ef4444;" title="Vermelho Resgate"></button>
+                <button class="theme-opt-btn" data-theme="blue" style="background-color: #3b82f6;" title="Azul Federal"></button>
+                <button class="theme-opt-btn" data-theme="green" style="background-color: #22c55e;" title="Verde Operações"></button>
             </div>
         </div>
     </div>

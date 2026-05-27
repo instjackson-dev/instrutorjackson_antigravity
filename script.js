@@ -85,13 +85,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // --- Scroll Animations ---
-    const animateElements = document.querySelectorAll('.module-card, .about-text, .audience-item, .pricing-card, .faq-item, .video-container, .carousel-container');
-
-    // Add initial class for animation
-    animateElements.forEach(el => {
-        el.classList.add('animate-on-scroll');
-    });
+    // --- Scroll Animations (Bautz Inspired) ---
+    const revealElements = document.querySelectorAll('.reveal-fade-up, .reveal-left, .reveal-right, .reveal-zoom, .stagger-container');
 
     const observerOptions = {
         root: null,
@@ -103,13 +98,13 @@ document.addEventListener('DOMContentLoaded', () => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.classList.add('visible');
-                // Optional: stop observing once animated
+                // stop observing once animated
                 observer.unobserve(entry.target);
             }
         });
     }, observerOptions);
 
-    animateElements.forEach(el => {
+    revealElements.forEach(el => {
         observer.observe(el);
     });
 
@@ -481,7 +476,61 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // --- Floating Theme Customizer (Color Switcher) ---
+    const themeCustomizer = document.getElementById('theme-customizer');
+    const themeToggleBtn = document.getElementById('theme-toggle-btn');
+    const themeOptBtns = document.querySelectorAll('.theme-opt-btn');
+
+    if (themeCustomizer && themeToggleBtn) {
+        // Toggle panel open/close
+        themeToggleBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            themeCustomizer.classList.toggle('active');
+        });
+
+        // Close panel when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!themeCustomizer.contains(e.target)) {
+                themeCustomizer.classList.remove('active');
+            }
+        });
+
+        // Handle color selection
+        themeOptBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const theme = btn.getAttribute('data-theme');
+                
+                // Reset body themes
+                document.body.classList.remove('theme-red', 'theme-blue', 'theme-green');
+                
+                // Apply new theme if not default (gold)
+                if (theme !== 'gold') {
+                    document.body.classList.add(`theme-${theme}`);
+                }
+                
+                // Update active button state
+                themeOptBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                // Save selection in localStorage
+                localStorage.setItem('tactical-theme', theme);
+            });
+        });
+
+        // Sincronize visual state of buttons with active theme on page load
+        const activeTheme = localStorage.getItem('tactical-theme') || 'gold';
+        themeOptBtns.forEach(btn => {
+            const btnTheme = btn.getAttribute('data-theme');
+            if (btnTheme === activeTheme) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+    }
+
     // Make functions available globally so they can be triggered from inline HTML handlers
     window.ijEnviar = ijEnviar;
     window.ijLimpaWA = ijLimpaWA;
 });
+
