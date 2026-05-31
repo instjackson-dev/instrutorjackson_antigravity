@@ -798,7 +798,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 90px;
+    height: 90px;
     box-shadow: 0 0 10px rgba(var(--gold-primary-rgb), 0.15);
 }
 
@@ -824,28 +824,13 @@ body {
 
 .company-logo {
     max-width: 85%;
-    max-height: 50px;
+    max-height: 48px;
     width: auto;
     height: auto;
     object-fit: contain;
     filter: brightness(0) invert(1);
     opacity: 0.65;
     transition: var(--transition-normal);
-}
-
-.company-logo.logo-boticario {
-    max-height: 98px;
-    max-width: 98%;
-}
-
-.company-logo.logo-curitiba {
-    max-height: 91px;
-    max-width: 98%;
-}
-
-.company-logo.logo-britania {
-    max-height: 84px;
-    max-width: 98%;
 }
 
 .company-card:hover .company-logo {
