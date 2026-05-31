@@ -1494,7 +1494,7 @@ body {
     color: var(--white);
     line-height: 1.1;
 }
-.hero-stat-item span {
+.hero-stat-item > span {
     font-size: 0.8rem;
     color: var(--text-muted);
     text-transform: uppercase;
