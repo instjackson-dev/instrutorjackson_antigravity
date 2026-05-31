@@ -15,7 +15,7 @@
 - **Claude**
 - **Codex**
 
-## Estado Atual
+- Substituídos os textos da seção "Grandes Empresas Atendidas" pelas respectivas logomarcas (Boticário, Porto Itapoá, Shopping Curitiba, Britânia, Park Art), aplicando transparência nos fundos das imagens e definindo transição monochrome-to-color de alta fidelidade no hover (Gemini - 2026-05-30).
 - Customizados os cards da seção de Grandes Empresas Atendidas com efeito de borda e sombra neon dourada responsiva (que se expande sob hover) e alteração das cores das letras internas para branco puro (com text-shadow sob hover) (Gemini - 2026-05-27).
 - Implementados os efeitos de rolagem premium inspirados na Bautz (revelação direcional lateral em imagens/textos, zoom no bloco de preços/vídeos centrais e efeito dominó/staggered em cascata nos grids) e o Customizador de Cores Táticas flutuante (Dourado, Vermelho, Azul, Verde) persistido no `localStorage` com script anti-flicker (Gemini - 2026-05-27).
 - Substituído o vídeo da seção Hero pela imagem de alta qualidade do Instrutor Jackson (`hero-instructor.jpg`), ajustando as classes HTML/CSS para `.hero-image-*` e preservando a responsividade, efeito hover 3D e glow dourado tático (Gemini - 2026-05-27).
