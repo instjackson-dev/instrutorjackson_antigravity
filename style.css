@@ -833,6 +833,21 @@ body {
     transition: var(--transition-normal);
 }
 
+.company-logo.logo-boticario {
+    max-height: 70px;
+    max-width: 95%;
+}
+
+.company-logo.logo-curitiba {
+    max-height: 65px;
+    max-width: 95%;
+}
+
+.company-logo.logo-britania {
+    max-height: 60px;
+    max-width: 95%;
+}
+
 .company-card:hover .company-logo {
     filter: none;
     opacity: 1;
