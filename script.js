@@ -5,6 +5,34 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
+    // --- Stats Counter Animation (60fps requestAnimationFrame with Ease-Out) ---
+    const counters = document.querySelectorAll('.stat-counter');
+    const duration = 2000; // 2 seconds animation
+
+    counters.forEach(counter => {
+        const target = +counter.getAttribute('data-target');
+        let startTime = null;
+
+        const animate = (timestamp) => {
+            if (!startTime) startTime = timestamp;
+            const progress = timestamp - startTime;
+            const percentage = Math.min(progress / duration, 1);
+            
+            // Quadratic ease-out formula
+            const easeOutPercentage = percentage * (2 - percentage);
+            
+            counter.innerText = Math.floor(easeOutPercentage * target);
+
+            if (progress < duration) {
+                requestAnimationFrame(animate);
+            } else {
+                counter.innerText = target;
+            }
+        };
+
+        requestAnimationFrame(animate);
+    });
+
     // --- Force Hero Video Playback ---
     const heroVideo = document.querySelector('.hero-video-element');
     if (heroVideo) {
