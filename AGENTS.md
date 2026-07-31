@@ -16,7 +16,8 @@
 - **Codex**
 
 ## Estado Atual
-- Adicionada a logomarca da empresa Preserv Segurança na seção "Grandes Empresas Atendidas", com tratamento de transparência e otimização PNG (`logo-preserv.png`) (Gemini - 2026-07-31).
+- Refatorada a logomarca da Preserv Segurança para uma versão de tipografia nítida com fundo 100% transparente (`logo-preserv.png`), eliminando ruídos/artefatos de fundo e garantindo legibilidade perfeita nas visualizações padrão e hover na seção "Grandes Empresas Atendidas" (Gemini - 2026-07-31).
+- Adicionada a logomarca da empresa Preserv Segurança na seção "Grandes Empresas Atendidas" (Gemini - 2026-07-31).
 - Substituída a imagem principal da Hero section pela nova foto oficial do Instrutor Jackson convertida para WebP (`hero-instructor.webp`), reduzindo o tamanho em ~68% (de 385KB para 123KB) sem perda de qualidade (Gemini - 2026-07-31).
 - Adicionada a tag do Google Analytics (`G-QJ22HSQ2VZ`) no `<head>` das páginas `index.html` e `instrutor.html` (Gemini - 2026-07-31).
 - Criados os arquivos do favicon (`favicon.ico` e `assets/images/favicon.png`) a partir do logotipo oficial de escudo fornecido pelo usuário, configurando as tags de link nos cabeçalhos das páginas `index.html` e `instrutor.html` (Gemini - 2026-05-31).
