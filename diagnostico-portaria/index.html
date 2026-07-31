@@ -70,11 +70,24 @@
     <div class="goldline"></div><footer>© 2026 Instrutor Jackson — Experiência • Técnica • Autoridade</footer>
   </main>
 <script>
+function obterRastreamento() {
+  const params = new URLSearchParams(window.location.search);
+
+  return {
+    utm_source: params.get('utm_source') || 'direto',
+    utm_medium: params.get('utm_medium') || 'none',
+    utm_campaign: params.get('utm_campaign') || 'sem-campanha',
+    utm_content: params.get('utm_content') || 'sem-conteudo',
+    pagina_origem: window.location.href,
+    referencia: document.referrer || 'acesso-direto'
+  };
+}
+
 const WEBHOOK='https://n8n.vps7900.panel.icontainer.run/webhook/checklist-acesso';
 const form=document.getElementById('lead-form'),btn=document.getElementById('submit'),err=document.getElementById('error');
 const wa=document.getElementById('whatsapp');
 wa.addEventListener('input',e=>{let x=e.target.value.replace(/\D/g,'').slice(0,11).match(/(\d{0,2})(\d{0,5})(\d{0,4})/);e.target.value=!x[2]?x[1]:'('+x[1]+') '+x[2]+(x[3]?'-'+x[3]:'')});
-form.addEventListener('submit',async e=>{e.preventDefault();err.style.display='none';btn.disabled=true;btn.textContent='ENVIANDO...';const raw=wa.value.replace(/\D/g,'');const payload={nome:nome.value.trim(),email:email.value.trim(),whatsapp:'55'+raw,empresa:empresa.value.trim(),funcao:funcao.value,origem:'landing-checklist-acesso',lead_magnet:'checklist-validacao-acesso',consentimento:consentimento.checked,data:new Date().toISOString()};try{const r=await fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});if(!r.ok)throw new Error('HTTP '+r.status);document.getElementById('form-area').style.display='none';document.getElementById('success').style.display='block';localStorage.setItem('checklist_acesso_lead','true')}catch(ex){err.textContent='Não foi possível concluir agora. Verifique a automação ou tente novamente.';err.style.display='block';btn.disabled=false;btn.textContent='RECEBER O CHECKLIST GRATUITO'}});
+form.addEventListener('submit',async e=>{e.preventDefault();err.style.display='none';btn.disabled=true;btn.textContent='ENVIANDO...';const raw=wa.value.replace(/\D/g,'');const rastreamento=obterRastreamento();const payload={nome:nome.value.trim(),email:email.value.trim(),whatsapp:'55'+raw,empresa:empresa.value.trim(),funcao:funcao.value,origem:'landing-checklist-acesso',lead_magnet:'checklist-validacao-acesso',consentimento:consentimento.checked,data:new Date().toISOString(),utm_source:rastreamento.utm_source,utm_medium:rastreamento.utm_medium,utm_campaign:rastreamento.utm_campaign,utm_content:rastreamento.utm_content,pagina_origem:rastreamento.pagina_origem,referencia:rastreamento.referencia};try{const r=await fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});if(!r.ok)throw new Error('HTTP '+r.status);document.getElementById('form-area').style.display='none';document.getElementById('success').style.display='block';localStorage.setItem('checklist_acesso_lead','true')}catch(ex){err.textContent='Não foi possível concluir agora. Verifique a automação ou tente novamente.';err.style.display='block';btn.disabled=false;btn.textContent='RECEBER O CHECKLIST GRATUITO'}});
 </script>
 </body>
 </html>

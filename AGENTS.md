@@ -16,6 +16,7 @@
 - **Codex**
 
 ## Estado Atual
+- Adicionado rastreamento de parâmetros UTM (utm_source, utm_medium, utm_campaign, utm_content, pagina_origem, referencia) no envio de leads da página `diagnostico-portaria/index.html` para o webhook n8n (Gemini - 2026-07-31).
 - Adicionada a tag do Google Analytics (`G-QJ22HSQ2VZ`) no `<head>` da página Diagnóstico de Portaria (`diagnostico-portaria/index.html`) (Gemini - 2026-07-31).
 - Refatorada a logomarca da Preserv Segurança para uma versão de tipografia nítida com fundo 100% transparente (`logo-preserv.png`), eliminando ruídos/artefatos de fundo e garantindo legibilidade perfeita nas visualizações padrão e hover na seção "Grandes Empresas Atendidas" (Gemini - 2026-07-31).
 - Adicionada a logomarca da empresa Preserv Segurança na seção "Grandes Empresas Atendidas" (Gemini - 2026-07-31).
