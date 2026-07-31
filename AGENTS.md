@@ -15,6 +15,8 @@
 - **Claude**
 - **Codex**
 
+## Estado Atual
+- Substituída a imagem principal da Hero section pela nova foto oficial do Instrutor Jackson convertida para WebP (`hero-instructor.webp`), reduzindo o tamanho em ~68% (de 385KB para 123KB) sem perda de qualidade (Gemini - 2026-07-31).
 - Adicionada a tag do Google Analytics (`G-QJ22HSQ2VZ`) no `<head>` das páginas `index.html` e `instrutor.html` (Gemini - 2026-07-31).
 - Criados os arquivos do favicon (`favicon.ico` e `assets/images/favicon.png`) a partir do logotipo oficial de escudo fornecido pelo usuário, configurando as tags de link nos cabeçalhos das páginas `index.html` e `instrutor.html` (Gemini - 2026-05-31).
 - Implementado efeito de contador numérico progressivo animado (0 a 500+, 0 a 40h, 0 a 23 Anos, 0 a 6+) no carregamento do site na seção Hero, utilizando requestAnimationFrame a 60fps com aceleração desacelerada (Ease-Out) para transição fluida (Gemini - 2026-05-31).
