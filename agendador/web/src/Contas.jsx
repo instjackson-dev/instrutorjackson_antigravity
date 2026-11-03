@@ -13,7 +13,16 @@ export default function Contas({ notify }) {
     const { data, error } = await supabase.functions.invoke('agendador/oauth-start', { body: { provider } });
     if (error || !data?.url) {
       setBusy(null);
-      return notify(data?.error || error?.message || 'Não foi possível iniciar a conexão.', true);
+      // Em erro HTTP o supabase-js não preenche data: a mensagem do servidor vem no corpo da resposta
+      const body = await error?.context?.json?.().catch(() => null);
+      const msg = body?.error || data?.error || error?.message || '';
+      const label = PROVIDERS.find((x) => x.id === provider)?.label ?? 'Esta rede';
+      return notify(
+        /Variável de ambiente ausente/.test(msg)
+          ? `${label} ainda não foi configurado: faltam as chaves do app de desenvolvedor dessa rede no Supabase.`
+          : msg || 'Não foi possível iniciar a conexão.',
+        true,
+      );
     }
     location.href = data.url;
   }
