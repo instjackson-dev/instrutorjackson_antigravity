@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { fmtDate, PLATFORMS, STATUS, supabase } from './lib.js';
+import { fmtDate, formatLabel, PLATFORMS, STATUS, supabase } from './lib.js';
 
 const Chip = ({ s }) => {
   const [label, kind] = STATUS[s] || [s, 'muted'];
@@ -75,7 +75,7 @@ export default function Fila({ notify }) {
             return (
               <li key={t.id}>
                 <span className="dot" style={{ background: p.color }} />
-                <b>{p.label}</b> <span className="muted">{t.accounts?.name}</span> <Chip s={t.status} />
+                <b>{p.label}</b> <span className="fmt-tag">{formatLabel(t.accounts?.platform, t.format)}</span> <span className="muted">{t.accounts?.name}</span> <Chip s={t.status} />
                 {t.published_url && <a href={t.published_url} target="_blank" rel="noreferrer">ver post</a>}
                 {t.status === 'failed' && <button className="link" onClick={() => retry(t, post)}>tentar de novo</button>}
                 {t.error && <div className="error">{t.error}</div>}

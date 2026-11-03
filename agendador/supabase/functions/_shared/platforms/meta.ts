@@ -61,26 +61,78 @@ export const meta: Provider = {
   },
 };
 
-export const publishFacebook: Publisher = async ({ account, tokens, post, caption, videoUrl }) => {
-  const res = await (await call('Facebook vídeo', `https://graph-video.facebook.com/${V()}/${account.external_id}/videos`, {
+// Upload hospedado do Facebook (Reels e Stories): a Meta baixa o vídeo da URL temporária.
+async function facebookHostedUpload(kind: 'video_reels' | 'video_stories', page: string, token: string, videoUrl: string) {
+  const start = await (await call(`Facebook ${kind} início`, `${GRAPH()}/${page}/${kind}`, {
+    method: 'POST',
+    body: form({ upload_phase: 'start', access_token: token }),
+  })).json();
+  const up = await (await call(`Facebook ${kind} upload`, start.upload_url ?? `https://rupload.facebook.com/video-upload/${V()}/${start.video_id}`, {
+    method: 'POST',
+    headers: { Authorization: `OAuth ${token}`, file_url: videoUrl },
+  })).json();
+  if (up.success === false) throw new ApiError(`Facebook ${kind}: upload recusado.`);
+  return String(start.video_id);
+}
+
+const FB_STEP: Record<string, string> = { uploading_phase: 'upload', processing_phase: 'processamento', publishing_phase: 'publicação' };
+
+export const publishFacebook: Publisher = async ({ account, tokens, post, caption, format, videoUrl, state }) => {
+  const page = account.external_id, token = tokens.access_token;
+
+  if (format === 'stories') {
+    const videoId = await facebookHostedUpload('video_stories', page, token, videoUrl);
+    const fin = await (await call('Facebook Stories publicar', `${GRAPH()}/${page}/video_stories`, {
+      method: 'POST',
+      body: form({ upload_phase: 'finish', video_id: videoId, access_token: token }),
+    })).json();
+    return { status: 'published', externalId: String(fin.post_id ?? videoId) };
+  }
+
+  if (format === 'reels') {
+    if (!state.video_id) {
+      const videoId = await facebookHostedUpload('video_reels', page, token, videoUrl);
+      await call('Facebook Reels publicar', `${GRAPH()}/${page}/video_reels`, {
+        method: 'POST',
+        body: form({ upload_phase: 'finish', video_id: videoId, video_state: 'PUBLISHED', description: caption, access_token: token }),
+      });
+      return { status: 'processing', state: { video_id: videoId }, retryInSec: 30 };
+    }
+    const s = await get('Facebook Reels status', `/${state.video_id}`, { fields: 'status', access_token: token });
+    for (const [phase, label] of Object.entries(FB_STEP)) {
+      if (s.status?.[phase]?.status === 'error') {
+        throw new ApiError(`Facebook recusou o Reels na etapa de ${label}: ${s.status[phase].errors?.[0]?.message ?? 'sem detalhe'}`, { permanent: true });
+      }
+    }
+    if (s.status?.publishing_phase?.status !== 'complete') return { status: 'processing', state, retryInSec: 30 };
+    return { status: 'published', externalId: state.video_id, url: `https://www.facebook.com/reel/${state.video_id}` };
+  }
+
+  // Feed: vídeo comum da Página
+  const res = await (await call('Facebook vídeo', `https://graph-video.facebook.com/${V()}/${page}/videos`, {
     method: 'POST',
     body: form({
       file_url: videoUrl,
       description: caption,
       ...(post.title ? { title: post.title } : {}),
-      access_token: tokens.access_token,
+      access_token: token,
     }),
   })).json();
   return { status: 'published', externalId: res.id, url: `https://www.facebook.com/${res.id}` };
 };
 
-export const publishInstagram: Publisher = async ({ account, tokens, caption, videoUrl, state }) => {
+export const publishInstagram: Publisher = async ({ account, tokens, caption, format, videoUrl, state }) => {
   const ig = account.external_id, token = tokens.access_token;
+  const stories = format === 'stories';
 
   if (!state.container) {
-    const c = await (await call('Instagram container', `${GRAPH()}/${ig}/media`, {
+    // Reels com share_to_feed também aparece no Feed. Stories não aceita legenda.
+    const params: Record<string, string> = stories
+      ? { media_type: 'STORIES', video_url: videoUrl, access_token: token }
+      : { media_type: 'REELS', video_url: videoUrl, caption: caption.slice(0, 2200), share_to_feed: 'true', access_token: token };
+    const c = await (await call(`Instagram ${stories ? 'Stories' : 'Reels'} container`, `${GRAPH()}/${ig}/media`, {
       method: 'POST',
-      body: form({ media_type: 'REELS', video_url: videoUrl, caption: caption.slice(0, 2200), share_to_feed: 'true', access_token: token }),
+      body: form(params),
     })).json();
     return { status: 'processing', state: { container: String(c.id) }, retryInSec: 30 };
   }

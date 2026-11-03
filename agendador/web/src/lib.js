@@ -14,6 +14,28 @@ export const PLATFORMS = {
   linkedin: { label: 'LinkedIn', color: '#0A66C2', provider: 'linkedin', limit: 3000 },
 };
 
+/**
+ * Formatos por rede. maxSec/minSec = limites de duração da própria rede (validados antes de agendar).
+ * Stories não usam legenda.
+ */
+export const FORMATS = {
+  youtube: [{ id: 'feed', label: 'Vídeo / Shorts', hint: 'Vertical e até 3 min vira Shorts automaticamente' }],
+  tiktok: [{ id: 'feed', label: 'Vídeo', maxSec: 600 }],
+  instagram: [
+    { id: 'reels', label: 'Reels + Feed', maxSec: 900 },
+    { id: 'stories', label: 'Stories', maxSec: 60, noCaption: true },
+  ],
+  facebook: [
+    { id: 'feed', label: 'Feed' },
+    { id: 'reels', label: 'Reels', minSec: 3, maxSec: 90 },
+    { id: 'stories', label: 'Stories', maxSec: 60, noCaption: true },
+  ],
+  linkedin: [{ id: 'feed', label: 'Feed', maxSec: 600 }],
+};
+
+export const formatLabel = (platform, format) =>
+  FORMATS[platform]?.find((f) => f.id === format)?.label ?? format;
+
 export const PROVIDERS = [
   { id: 'google', label: 'YouTube', note: 'Canal do YouTube' },
   { id: 'meta', label: 'Facebook + Instagram', note: 'Páginas e Instagram Profissional ligado a elas' },

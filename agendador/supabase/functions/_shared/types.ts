@@ -1,6 +1,9 @@
 /** Etapa em andamento numa rede (ex.: id do container do Instagram). */
 export type RemoteState = Record<string, string | undefined>;
 
+/** Formato da publicação na rede. */
+export type Format = 'feed' | 'reels' | 'stories';
+
 export type PlatformId = 'youtube' | 'tiktok' | 'instagram' | 'facebook' | 'linkedin';
 
 export interface Tokens {
@@ -33,6 +36,7 @@ export interface PublishCtx {
   tokens: Tokens;
   post: Post;
   caption: string;
+  format: Format;
   videoUrl: string;                    // URL assinada e temporária do vídeo
   state: RemoteState;                  // etapa salva da execução anterior
 }

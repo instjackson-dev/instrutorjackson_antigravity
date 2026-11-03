@@ -1,6 +1,16 @@
 # Agendador de Vídeos — Instrutor Jackson
 
-App próprio para **postar e agendar vídeos** no YouTube, TikTok, Instagram, Facebook e LinkedIn a partir de uma tela só.
+App próprio para **postar e agendar vídeos** no YouTube, TikTok, Instagram, Facebook e LinkedIn a partir de uma tela só, escolhendo o **formato** em cada rede:
+
+| Rede | Formatos |
+|---|---|
+| Instagram | Reels (também aparece no Feed) · Stories (até 60 s, sem legenda) |
+| Facebook (Página) | Feed · Reels (3–90 s) · Stories (até 60 s, sem legenda) |
+| YouTube | Vídeo / Shorts (vertical e até 3 min vira Shorts automaticamente) |
+| TikTok | Vídeo |
+| LinkedIn | Feed (perfil pessoal) |
+
+O mesmo vídeo pode ir para vários formatos de uma vez (ex.: Reels + Stories no Instagram). A duração é conferida antes de agendar.
 
 - **Tela (React + Vite)** — `web/`: você sobe o vídeo, escreve a legenda (geral ou por rede), escolhe data/hora e marca as redes.
 - **Servidor (Supabase)** — `supabase/`: banco, armazenamento do vídeo, login nas redes (OAuth) e o **publicador**, que roda sozinho a cada minuto.
@@ -19,7 +29,7 @@ Cada rede tem etapas diferentes (Instagram e TikTok processam o vídeo antes de 
 
 1. Crie um projeto em <https://supabase.com> (o plano grátis serve; o limite de vídeo é **50 MB**. No plano Pro dá para subir esse limite em *Storage > Settings*).
 2. Instale a CLI e vincule: `npx supabase login` e `npx supabase link --project-ref SEU-REF` (rode dentro de `agendador/`).
-3. Crie as tabelas: `npx supabase db push` (aplica `migrations/…_init.sql` e `…_cron.sql`).
+3. Crie as tabelas: `npx supabase db push` (aplica `…_init.sql`, `…_cron.sql` e `…_formats.sql`).
    - Depois, no **SQL Editor**, crie os dois segredos que o cron usa (comandos no topo de `…_cron.sql`). O cron lê esses segredos a cada execução, então a ordem não importa.
 4. **Authentication > Providers > Email**: desligue *Allow new users to sign up* e crie o seu usuário em *Authentication > Users > Add user*. Só você entra no app.
 
@@ -73,7 +83,7 @@ Na Vercel: *Add New Project* → este repositório → **Root Directory: `agenda
 ## 5. Uso
 
 1. **Contas** → conecte YouTube, Facebook + Instagram, TikTok e LinkedIn.
-2. **Agendar** → escolha o vídeo, título, legenda (ou uma legenda por rede), marque as redes, defina data/hora → *Agendar* ou *Publicar agora*.
+2. **Agendar** → escolha o vídeo, título, legenda (ou uma legenda por rede), marque os formatos em cada rede (Feed, Reels, Stories), defina data/hora → *Agendar* ou *Publicar agora*.
 3. **Fila** → acompanhe cada rede (Aguardando → Processando → Publicado), veja o link do post, cancele ou tente de novo.
 
 ## Formato recomendado do vídeo

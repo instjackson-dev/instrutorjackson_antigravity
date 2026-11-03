@@ -54,6 +54,7 @@ async function processTarget(db: SupabaseClient, t: any) {
       tokens,
       post,
       caption: (t.caption ?? post.caption ?? '').trim(),
+      format: t.format ?? 'feed',
       videoUrl: signed.signedUrl,
       state: t.remote_state ?? {},
     });

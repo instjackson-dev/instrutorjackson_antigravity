@@ -1,12 +1,21 @@
 import { useEffect, useMemo, useState } from 'react';
-import { MAX_MB, PLATFORMS, supabase, toLocalInput, uploadWithProgress } from './lib.js';
+import { FORMATS, MAX_MB, PLATFORMS, supabase, toLocalInput, uploadWithProgress } from './lib.js';
+
+/** Formatos que o vídeo não atende pela duração (ex.: Stories > 60 s). */
+function durationProblem(fmt, sec) {
+  if (!sec) return null;
+  if (fmt.maxSec && sec > fmt.maxSec) return `máx. ${fmt.maxSec} s`;
+  if (fmt.minSec && sec < fmt.minSec) return `mín. ${fmt.minSec} s`;
+  return null;
+}
 
 export default function Agendar({ notify, goTo }) {
   const [accounts, setAccounts] = useState([]);
   const [file, setFile] = useState(null);
+  const [duration, setDuration] = useState(null);
   const [title, setTitle] = useState('');
   const [caption, setCaption] = useState('');
-  const [selected, setSelected] = useState({});      // account_id -> true
+  const [selected, setSelected] = useState({});      // account_id -> [formatos]
   const [custom, setCustom] = useState({});          // account_id -> legenda própria
   const [when, setWhen] = useState(() => toLocalInput(new Date(Date.now() + 15 * 60_000)));
   const [progress, setProgress] = useState(null);
@@ -14,7 +23,8 @@ export default function Agendar({ notify, goTo }) {
   useEffect(() => {
     supabase.from('accounts').select('*').order('platform').then(({ data }) => {
       setAccounts(data || []);
-      setSelected(Object.fromEntries((data || []).filter((a) => a.status === 'ok').map((a) => [a.id, true])));
+      // Por padrão: primeiro formato de cada conta conectada
+      setSelected(Object.fromEntries((data || []).filter((a) => a.status === 'ok').map((a) => [a.id, [FORMATS[a.platform][0].id]])));
     });
   }, []);
 
@@ -24,20 +34,33 @@ export default function Agendar({ notify, goTo }) {
   function pickFile(f) {
     if (!f) return;
     if (f.size > MAX_MB * 1024 * 1024) return notify(`Vídeo maior que ${MAX_MB} MB. Comprima antes de enviar.`, true);
+    setDuration(null);
     setFile(f);
   }
 
-  const chosen = accounts.filter((a) => selected[a.id]);
+  function toggle(accountId, formatId, on) {
+    const cur = selected[accountId] || [];
+    const next = on ? [...new Set([...cur, formatId])] : cur.filter((x) => x !== formatId);
+    setSelected({ ...selected, [accountId]: next });
+  }
+
+  // Uma publicação por conta + formato
+  const targets = accounts.flatMap((a) =>
+    (selected[a.id] || []).map((fid) => ({ account: a, fmt: FORMATS[a.platform].find((f) => f.id === fid) })),
+  );
 
   async function submit(now) {
     if (!file) return notify('Escolha o vídeo.', true);
-    if (!chosen.length) return notify('Marque ao menos uma rede.', true);
+    if (!targets.length) return notify('Marque ao menos um formato em alguma rede.', true);
     const scheduledAt = now ? new Date() : new Date(when);
     if (!now && scheduledAt < new Date(Date.now() - 60_000)) return notify('A data/hora já passou.', true);
-    for (const a of chosen) {
+    for (const { account: a, fmt } of targets) {
+      const label = `${PLATFORMS[a.platform].label} ${fmt.label}`;
+      const problem = durationProblem(fmt, duration);
+      if (problem) return notify(`${label}: o vídeo tem ${Math.round(duration)} s (${problem}). Desmarque ou corte o vídeo.`, true);
       const text = custom[a.id] ?? caption;
       const lim = PLATFORMS[a.platform].limit;
-      if (text.length > lim) return notify(`Legenda do ${PLATFORMS[a.platform].label} passa de ${lim} caracteres.`, true);
+      if (!fmt.noCaption && text.length > lim) return notify(`Legenda do ${PLATFORMS[a.platform].label} passa de ${lim} caracteres.`, true);
     }
 
     try {
@@ -58,12 +81,12 @@ export default function Agendar({ notify, goTo }) {
       if (error) throw error;
 
       const { error: e2 } = await supabase.from('post_targets').insert(
-        chosen.map((a) => ({ post_id: post.id, account_id: a.id, caption: custom[a.id] ?? null })),
+        targets.map(({ account: a, fmt }) => ({ post_id: post.id, account_id: a.id, format: fmt.id, caption: custom[a.id] ?? null })),
       );
       if (e2) throw e2;
 
       notify(now ? 'Enviado para publicação. Acompanhe na Fila.' : 'Vídeo agendado!');
-      setFile(null); setTitle(''); setCaption(''); setCustom({});
+      setFile(null); setDuration(null); setTitle(''); setCaption(''); setCustom({});
       goTo('fila');
     } catch (err) {
       notify(err.message || 'Erro ao agendar.', true);
@@ -87,33 +110,53 @@ export default function Agendar({ notify, goTo }) {
         <h2>1. Vídeo</h2>
         <label className="drop">
           <input type="file" accept="video/mp4,video/quicktime,video/*" hidden onChange={(e) => pickFile(e.target.files[0])} />
-          {preview ? <video src={preview} controls playsInline /> : <span>Toque para escolher o vídeo<br /><small>MP4 ou MOV · até {MAX_MB} MB · vertical 9:16 recomendado</small></span>}
+          {preview
+            ? <video src={preview} controls playsInline onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)} />
+            : <span>Toque para escolher o vídeo<br /><small>MP4 ou MOV · até {MAX_MB} MB · vertical 9:16 recomendado</small></span>}
         </label>
-        {file && <div className="muted">{file.name} · {(file.size / 1048576).toFixed(1)} MB</div>}
+        {file && (
+          <div className="muted">
+            {file.name} · {(file.size / 1048576).toFixed(1)} MB{duration ? ` · ${Math.round(duration)} s` : ''}
+          </div>
+        )}
 
-        <label>Título <small>(YouTube e LinkedIn)</small></label>
+        <label>Título <small>(YouTube, Facebook Feed e LinkedIn)</small></label>
         <input value={title} maxLength={100} onChange={(e) => setTitle(e.target.value)} placeholder="Ex.: Abordagem em portaria — erro nº 1" />
 
         <label>Legenda / descrição</label>
         <textarea value={caption} onChange={(e) => setCaption(e.target.value)} rows={6} placeholder="Texto que vai em todas as redes marcadas" />
-        <div className="muted right">{caption.length} caracteres</div>
+        <div className="muted right">{caption.length} caracteres · Stories não levam legenda</div>
       </div>
 
       <div className="card">
-        <h2>2. Onde publicar</h2>
+        <h2>2. Onde e em qual formato</h2>
         {accounts.map((a) => {
           const p = PLATFORMS[a.platform];
+          const fmts = FORMATS[a.platform];
+          const chosen = selected[a.id] || [];
+          const usesCaption = chosen.some((fid) => !fmts.find((f) => f.id === fid)?.noCaption);
           const text = custom[a.id] ?? caption;
           return (
             <div key={a.id} className={`acc ${a.status !== 'ok' ? 'off' : ''}`}>
-              <label className="check">
-                <input type="checkbox" disabled={a.status !== 'ok'} checked={!!selected[a.id]}
-                  onChange={(e) => setSelected({ ...selected, [a.id]: e.target.checked })} />
+              <div className="acc-head">
                 <span className="dot" style={{ background: p.color }} />
                 <b>{p.label}</b> <span className="muted">{a.name}</span>
                 {a.status !== 'ok' && <span className="chip err">reconectar</span>}
-              </label>
-              {selected[a.id] && (
+              </div>
+              <div className="formats">
+                {fmts.map((f) => {
+                  const problem = durationProblem(f, duration);
+                  return (
+                    <label key={f.id} className={`fmt ${chosen.includes(f.id) ? 'on' : ''} ${problem ? 'bad' : ''}`} title={f.hint || ''}>
+                      <input type="checkbox" disabled={a.status !== 'ok'} checked={chosen.includes(f.id)}
+                        onChange={(e) => toggle(a.id, f.id, e.target.checked)} />
+                      {f.label}{problem && <small> · {problem}</small>}
+                    </label>
+                  );
+                })}
+              </div>
+              {fmts[0].hint && <div className="muted small">{fmts[0].hint}</div>}
+              {usesCaption && (
                 <details>
                   <summary className="muted">Legenda própria para {p.label} {text.length > p.limit && <span className="chip err">{text.length}/{p.limit}</span>}</summary>
                   <textarea rows={4} value={custom[a.id] ?? ''} placeholder="Deixe vazio para usar a legenda geral"
@@ -136,7 +179,7 @@ export default function Agendar({ notify, goTo }) {
           <div className="progress"><div style={{ width: `${progress}%` }} /><span>Enviando vídeo… {progress}%</span></div>
         ) : (
           <div className="actions">
-            <button className="btn pri" onClick={() => submit(false)}>Agendar</button>
+            <button className="btn pri" onClick={() => submit(false)}>Agendar ({targets.length})</button>
             <button className="btn" onClick={() => submit(true)}>Publicar agora</button>
           </div>
         )}
