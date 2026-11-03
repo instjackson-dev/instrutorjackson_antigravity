@@ -29,9 +29,12 @@ Cada rede tem etapas diferentes (Instagram e TikTok processam o vídeo antes de 
 
 1. Crie um projeto em <https://supabase.com> (o plano grátis serve; o limite de vídeo é **50 MB**. No plano Pro dá para subir esse limite em *Storage > Settings*).
 2. Instale a CLI e vincule: `npx supabase login` e `npx supabase link --project-ref SEU-REF` (rode dentro de `agendador/`).
-3. Crie as tabelas: `npx supabase db push` (aplica `…_init.sql`, `…_cron.sql` e `…_formats.sql`).
+3. Crie as tabelas: `npx supabase db push` (aplica todas as migrations da pasta).
    - Depois, no **SQL Editor**, crie os dois segredos que o cron usa (comandos no topo de `…_cron.sql`). O cron lê esses segredos a cada execução, então a ordem não importa.
-4. **Authentication > Providers > Email**: desligue *Allow new users to sign up* e crie o seu usuário em *Authentication > Users > Add user*. Só você entra no app.
+4. **Login do app** (só o seu e-mail entra — a migration `…_allowlist.sql` bloqueia qualquer outro):
+   - No SQL Editor: `insert into public.allowed_emails (email) values ('seu-email@gmail.com');`
+   - *Authentication > URL Configuration*: em **Site URL** coloque o endereço do app na Vercel e adicione-o também em **Redirect URLs**.
+   - **Link por e-mail** já funciona assim. Para **Entrar com Google**: *Authentication > Providers > Google* → cole o Client ID/Secret do Google (pode ser o mesmo cliente do YouTube, passo 2) e adicione `https://SEU-REF.supabase.co/auth/v1/callback` nas URIs de redirecionamento do cliente no Google Cloud.
 
 ## 2. Apps de desenvolvedor de cada rede
 

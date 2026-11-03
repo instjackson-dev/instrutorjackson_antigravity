@@ -13,7 +13,7 @@ const TABS = [
 
 export default function App() {
   const [session, setSession] = useState(undefined);
-  const [tab, setTab] = useState(() => location.hash.slice(1) || 'agendar');
+  const [tab, setTab] = useState(() => (['agendar', 'fila', 'contas'].includes(location.hash.slice(1)) ? location.hash.slice(1) : 'agendar'));
   const [toast, setToast] = useState(null);
   const timer = useRef();
 
@@ -35,7 +35,11 @@ export default function App() {
     const q = new URLSearchParams(location.search);
     if (q.get('ok')) notify(`Conectado: ${q.get('n') || 1} conta(s).`);
     if (q.get('erro')) notify(q.get('erro'), true);
-    if (q.toString()) history.replaceState(null, '', location.pathname + location.hash);
+    // Login recusado (e-mail fora da lista de acesso) volta com error_description
+    const authErr = q.get('error_description') || new URLSearchParams(location.hash.slice(1)).get('error_description');
+    if (authErr) notify(/database|sem acesso/i.test(authErr) ? 'Este e-mail não tem acesso ao Agendador.' : authErr, true);
+    // Não mexe em ?code= (retorno do login, tratado pelo supabase-js)
+    if (q.get('ok') || q.get('erro') || authErr) history.replaceState(null, '', location.pathname);
   }, [notify]);
 
   useEffect(() => { location.hash = tab; }, [tab]);

@@ -4,7 +4,8 @@ export const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 export const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 export const MAX_MB = Number(import.meta.env.VITE_MAX_MB || 50);
 
-export const supabase = createClient(SUPABASE_URL || 'http://localhost', SUPABASE_ANON_KEY || 'anon');
+// PKCE: o retorno do login vem em ?code= (não conflita com as abas em #)
+export const supabase = createClient(SUPABASE_URL || 'http://localhost', SUPABASE_ANON_KEY || 'anon', { auth: { flowType: 'pkce' } });
 
 export const PLATFORMS = {
   youtube: { label: 'YouTube', color: '#FF0000', provider: 'google', limit: 5000 },
