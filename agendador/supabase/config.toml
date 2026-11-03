@@ -1,0 +1,13 @@
+project_id = "agendador"
+
+# Chamado pelo navegador com o login do usuário
+[functions.oauth-start]
+verify_jwt = true
+
+# Retorno das redes sociais (sem login do Supabase — validado pelo "state")
+[functions.oauth-callback]
+verify_jwt = false
+
+# Chamado pelo cron — validado pelo cabeçalho x-cron-secret
+[functions.publisher]
+verify_jwt = false

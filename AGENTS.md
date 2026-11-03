@@ -16,6 +16,7 @@
 - **Codex**
 
 ## Estado Atual
+- Criado o Agendador de Vídeos (`agendador/`): app React/Vite (`agendador/web`, deploy Vercel com Root Directory `agendador/web`) + Supabase (tabelas, Storage privado, Edge Functions `oauth-start`, `oauth-callback`, `publisher` e cron a cada minuto) para postar/agendar vídeos no YouTube, TikTok, Instagram (Reels), Facebook (Página) e LinkedIn (perfil) via APIs oficiais. Depende de apps de desenvolvedor aprovados em cada rede — ver `agendador/README.md` (Claude - 2026-11-03).
 - Criado o Painel de Postagem em Grupos (`painel-grupos/index.html`, noindex): ferramenta de uso interno para postagem manual em grupos do Facebook, com anúncios (texto + até 4 imagens em rotação), cadastro de grupos com intervalo mínimo entre posts, link com UTM por grupo, cópia de texto/imagem, histórico e backup JSON. Sem automação de publicação (Claude - 2026-10-16).
 - Adicionado rastreamento de parâmetros UTM (utm_source, utm_medium, utm_campaign, utm_content, pagina_origem, referencia) no envio de leads da página `diagnostico-portaria/index.html` para o webhook n8n (Gemini - 2026-07-31).
 - Adicionada a tag do Google Analytics (`G-QJ22HSQ2VZ`) no `<head>` da página Diagnóstico de Portaria (`diagnostico-portaria/index.html`) (Gemini - 2026-07-31).
