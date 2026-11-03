@@ -19,7 +19,16 @@ const get = async (label: string, path: string, params: Record<string, string>) 
 
 export const meta: Provider = {
   authUrl(state, redirectUri) {
-    const q = new URLSearchParams({ client_id: env('META_APP_ID'), redirect_uri: redirectUri, state, scope: SCOPES, response_type: 'code' });
+    // Apps do tipo Empresa usam "Login do Facebook para Empresas": as permissões vêm de uma
+    // configuração criada no painel da Meta (META_CONFIG_ID) em vez do parâmetro scope.
+    const configId = Deno.env.get('META_CONFIG_ID');
+    const q = new URLSearchParams({
+      client_id: env('META_APP_ID'),
+      redirect_uri: redirectUri,
+      state,
+      response_type: 'code',
+      ...(configId ? { config_id: configId } : { scope: SCOPES }),
+    });
     return `https://www.facebook.com/${V()}/dialog/oauth?${q}`;
   },
 
