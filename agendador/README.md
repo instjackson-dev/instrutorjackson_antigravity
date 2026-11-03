@@ -18,7 +18,7 @@ O mesmo vídeo pode ir para vários formatos de uma vez (ex.: Reels + Stories no
 ```
 Você (navegador) ──► Supabase Storage (vídeo) + tabela posts
                                     │
-            cron a cada 1 min ──► função "publisher" ──► YouTube / TikTok / Instagram / Facebook / LinkedIn
+            cron a cada 1 min ──► função "agendador" (rota /publisher) ──► YouTube / TikTok / Instagram / Facebook / LinkedIn
 ```
 
 Cada rede tem etapas diferentes (Instagram e TikTok processam o vídeo antes de publicar). O publicador guarda a etapa e continua na rodada seguinte; falhas temporárias são repetidas até 3 vezes. Quando tudo é publicado, o vídeo é apagado do armazenamento.
@@ -41,7 +41,7 @@ Cada rede tem etapas diferentes (Instagram e TikTok processam o vídeo antes de 
 Em todas use a mesma **URL de redirecionamento**:
 
 ```
-https://SEU-REF.supabase.co/functions/v1/oauth-callback
+https://SEU-REF.supabase.co/functions/v1/agendador/oauth-callback
 ```
 
 | Rede | Onde criar | O que ativar | Segredos |
@@ -63,9 +63,7 @@ npx supabase secrets set \
   TIKTOK_CLIENT_KEY=... TIKTOK_CLIENT_SECRET=... \
   LINKEDIN_CLIENT_ID=... LINKEDIN_CLIENT_SECRET=...
 
-npx supabase functions deploy oauth-start
-npx supabase functions deploy oauth-callback --no-verify-jwt
-npx supabase functions deploy publisher --no-verify-jwt
+npx supabase functions deploy agendador --no-verify-jwt
 ```
 
 Use o **mesmo valor de `CRON_SECRET`** no segredo `cron_secret` do Vault (passo 1.3).

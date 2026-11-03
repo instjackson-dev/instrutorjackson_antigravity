@@ -1,16 +1,16 @@
 // Publicador: chamado pelo cron a cada minuto. Processa os alvos vencidos, um de cada vez,
 // guardando a etapa de cada rede para continuar na próxima rodada (processamento assíncrono).
 import type { SupabaseClient } from 'jsr:@supabase/supabase-js@2';
-import { admin, ApiError, env, json } from '../_shared/core.ts';
-import { PUBLISHERS, REFRESHERS } from '../_shared/platforms/index.ts';
-import type { Account, Post, Tokens } from '../_shared/types.ts';
+import { admin, ApiError, env, json } from './core.ts';
+import { PUBLISHERS, REFRESHERS } from './platforms/index.ts';
+import type { Account, Post, Tokens } from './types.ts';
 
 const MAX_ATTEMPTS = 3;
 const TIME_BUDGET_MS = 100_000;          // abaixo do limite de execução das Edge Functions
 const MAX_PROCESSING_MS = 3 * 3600_000;  // desiste se a rede não terminar de processar em 3 h
 const SIGNED_URL_SECS = 6 * 3600;        // Instagram/Facebook baixam o vídeo por esta URL
 
-Deno.serve(async (req) => {
+export async function publisher(req: Request): Promise<Response> {
   if (req.headers.get('x-cron-secret') !== env('CRON_SECRET')) return json({ error: 'forbidden' }, 403);
 
   const db = admin();
@@ -24,7 +24,7 @@ Deno.serve(async (req) => {
     for (const t of rows) results.push(await processTarget(db, t));
   }
   return json({ processed: results.length, results });
-});
+}
 
 // deno-lint-ignore no-explicit-any
 async function processTarget(db: SupabaseClient, t: any) {

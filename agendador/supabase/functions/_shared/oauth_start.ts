@@ -1,8 +1,8 @@
 // Gera a URL de login da rede escolhida para o usuário logado.
-import { admin, cors, json, redirectUri } from '../_shared/core.ts';
-import { PROVIDERS } from '../_shared/platforms/index.ts';
+import { admin, cors, json, redirectUri } from './core.ts';
+import { PROVIDERS } from './platforms/index.ts';
 
-Deno.serve(async (req) => {
+export async function oauthStart(req: Request): Promise<Response> {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: cors });
   try {
     const db = admin();
@@ -22,4 +22,4 @@ Deno.serve(async (req) => {
   } catch (e) {
     return json({ error: (e as Error).message }, 500);
   }
-});
+}

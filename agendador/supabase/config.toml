@@ -1,13 +1,7 @@
 project_id = "agendador"
 
-# Chamado pelo navegador com o login do usuário
-[functions.oauth-start]
-verify_jwt = true
-
-# Retorno das redes sociais (sem login do Supabase — validado pelo "state")
-[functions.oauth-callback]
-verify_jwt = false
-
-# Chamado pelo cron — validado pelo cabeçalho x-cron-secret
-[functions.publisher]
+# Função única com três rotas. Sem verificação automática de JWT porque cada rota
+# se autentica sozinha: oauth-start valida o login do usuário, oauth-callback usa o
+# "state" de uso único e publisher exige o cabeçalho x-cron-secret.
+[functions.agendador]
 verify_jwt = false

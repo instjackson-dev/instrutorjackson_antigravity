@@ -9,7 +9,7 @@ export function env(key: string, fallback?: string): string {
 export const admin = (): SupabaseClient =>
   createClient(env('SUPABASE_URL'), env('SUPABASE_SERVICE_ROLE_KEY'), { auth: { persistSession: false } });
 
-export const redirectUri = () => env('OAUTH_REDIRECT_URI', `${env('SUPABASE_URL')}/functions/v1/oauth-callback`);
+export const redirectUri = () => env('OAUTH_REDIRECT_URI', `${env('SUPABASE_URL')}/functions/v1/agendador/oauth-callback`);
 
 export const cors = {
   'Access-Control-Allow-Origin': '*',

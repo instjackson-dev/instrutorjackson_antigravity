@@ -10,7 +10,7 @@ export default function Contas({ notify }) {
 
   async function connect(provider) {
     setBusy(provider);
-    const { data, error } = await supabase.functions.invoke('oauth-start', { body: { provider } });
+    const { data, error } = await supabase.functions.invoke('agendador/oauth-start', { body: { provider } });
     if (error || !data?.url) {
       setBusy(null);
       return notify(data?.error || error?.message || 'Não foi possível iniciar a conexão.', true);

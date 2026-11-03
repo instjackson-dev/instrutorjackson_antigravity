@@ -1,10 +1,10 @@
 // Retorno do login das redes: troca o código por tokens, salva as contas e volta para o app.
-import { admin, env, redirectUri } from '../_shared/core.ts';
-import { PROVIDERS } from '../_shared/platforms/index.ts';
+import { admin, env, redirectUri } from './core.ts';
+import { PROVIDERS } from './platforms/index.ts';
 
 const STATE_TTL_MS = 15 * 60 * 1000;
 
-Deno.serve(async (req) => {
+export async function oauthCallback(req: Request): Promise<Response> {
   const app = env('APP_URL').replace(/\/$/, '');
   const back = (q: Record<string, string>) => Response.redirect(`${app}/?${new URLSearchParams(q)}#contas`, 302);
 
@@ -47,4 +47,4 @@ Deno.serve(async (req) => {
   } catch (e) {
     return back({ erro: (e as Error).message.slice(0, 300) });
   }
-});
+}
