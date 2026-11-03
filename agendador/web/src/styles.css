@@ -80,6 +80,7 @@ details { margin: 6px 0 0 16px; }
 details summary { cursor: pointer; }
 details textarea { margin-top: 6px; }
 .avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; display: inline-block; flex: 0 0 40px; }
+.avatar-fallback { display: inline-grid; place-items: center; color: #fff; font-weight: 700; font-size: 16px; }
 .providers { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
 .btn.prov { flex-direction: column; align-items: flex-start; padding: 14px; text-align: left; }
 .btn.prov small { color: var(--muted); font-weight: 400; }

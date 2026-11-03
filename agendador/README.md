@@ -68,7 +68,7 @@ npx supabase functions deploy agendador --no-verify-jwt
 
 Use o **mesmo valor de `CRON_SECRET`** no segredo `cron_secret` do Vault (passo 1.3).
 
-Opcionais: `YOUTUBE_PRIVACY` (`public` | `unlisted` | `private`, padrão `public`), `TIKTOK_PRIVACY` (padrão `SELF_ONLY`; troque para `PUBLIC_TO_EVERYONE` depois da auditoria), `META_GRAPH_VERSION` (padrão `v21.0`), `META_CONFIG_ID` (app Meta do tipo Empresa: ID da configuração do *Login do Facebook para Empresas*; quando definido, substitui a lista de permissões), `LINKEDIN_VERSION` (padrão `202510`, formato AAAAMM; o LinkedIn aceita versões de até ~1 ano).
+Opcionais: `YOUTUBE_PRIVACY` (`public` | `unlisted` | `private`, padrão `public`), `TIKTOK_PRIVACY` (padrão `SELF_ONLY`; troque para `PUBLIC_TO_EVERYONE` depois da auditoria), `META_GRAPH_VERSION` (padrão `v21.0`), `META_CONFIG_ID` (app Meta do tipo Empresa: ID da configuração do *Login do Facebook para Empresas*; quando definido, substitui a lista de permissões), `LINKEDIN_VERSION` (formato AAAAMM; sem ela o servidor testa sozinho do mês atual para trás até achar a versão ativa).
 
 ## 4. Tela (Vercel)
 
