@@ -103,3 +103,5 @@ select:focus { border-color: var(--orange); }
 .vid-info { flex: 1; min-width: 0; word-break: break-word; }
 .vid-info .actions { margin-top: 8px; }
 .btn.small-btn { padding: 6px 10px; font-size: 13px; }
+.per-net { margin: 10px 0 0; }
+.per-net label { display: flex; align-items: center; gap: 4px; }
