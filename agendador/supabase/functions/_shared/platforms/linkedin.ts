@@ -2,11 +2,48 @@
 import { ApiError, call, env, fetchRange, form, inSeconds } from '../core.ts';
 import type { Provider, Publisher } from '../types.ts';
 
-const rest = () => ({
-  'LinkedIn-Version': env('LINKEDIN_VERSION', '202510'),
-  'X-Restli-Protocol-Version': '2.0.0',
-  'Content-Type': 'application/json',
-});
+// O LinkedIn exige o cabeçalho LinkedIn-Version (AAAAMM) e desativa versões antigas com o tempo.
+// Tenta LINKEDIN_VERSION (se definida) e depois os últimos 12 meses, guardando a primeira que funcionar.
+let activeVersion: string | null = null;
+
+function candidateVersions(): string[] {
+  const out: string[] = [];
+  const fixed = Deno.env.get('LINKEDIN_VERSION');
+  if (fixed) out.push(fixed);
+  const d = new Date();
+  for (let i = 0; i < 12; i++) {
+    out.push(`${d.getUTCFullYear()}${String(d.getUTCMonth() + 1).padStart(2, '0')}`);
+    d.setUTCMonth(d.getUTCMonth() - 1, 1);
+  }
+  return [...new Set(out)];
+}
+
+/** Chamada à API REST do LinkedIn com a versão ativa (resposta 426 = versão inativa, tenta a próxima). */
+async function liRest(label: string, url: string, token: string, init: RequestInit = {}): Promise<Response> {
+  const versions = activeVersion ? [activeVersion] : candidateVersions();
+  let last: unknown;
+  for (const v of versions) {
+    try {
+      const res = await call(label, url, {
+        ...init,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'LinkedIn-Version': v,
+          'X-Restli-Protocol-Version': '2.0.0',
+          'Content-Type': 'application/json',
+          ...(init.headers ?? {}),
+        },
+      });
+      activeVersion = v;
+      return res;
+    } catch (e) {
+      last = e;
+      if (!(e instanceof ApiError && /HTTP 426/.test(e.message))) throw e;
+      if (activeVersion) { activeVersion = null; return liRest(label, url, token, init); }
+    }
+  }
+  throw last;
+}
 
 // O campo "commentary" usa o formato "little text": estes caracteres precisam de barra invertida.
 const escapeLittleText = (s: string) => s.replace(/[\\|{}@[\]()<>#*_~]/g, (c) => `\\${c}`);
@@ -51,13 +88,12 @@ export const linkedin: Provider = {
 };
 
 export const publishLinkedin: Publisher = async ({ account, tokens, post, caption, videoUrl, state }) => {
-  const auth = { Authorization: `Bearer ${tokens.access_token}`, ...rest() };
+  const token = tokens.access_token;
   const owner = `urn:li:person:${account.external_id}`;
 
   if (!state.video) {
-    const init = await (await call('LinkedIn início do upload', 'https://api.linkedin.com/rest/videos?action=initializeUpload', {
+    const init = await (await liRest('LinkedIn início do upload', 'https://api.linkedin.com/rest/videos?action=initializeUpload', token, {
       method: 'POST',
-      headers: auth,
       body: JSON.stringify({
         initializeUploadRequest: { owner, fileSizeBytes: post.video_size, uploadCaptions: false, uploadThumbnail: false },
       }),
@@ -77,23 +113,19 @@ export const publishLinkedin: Publisher = async ({ account, tokens, post, captio
       etags.push(etag);
     }
 
-    await call('LinkedIn finalizar upload', 'https://api.linkedin.com/rest/videos?action=finalizeUpload', {
+    await liRest('LinkedIn finalizar upload', 'https://api.linkedin.com/rest/videos?action=finalizeUpload', token, {
       method: 'POST',
-      headers: auth,
       body: JSON.stringify({ finalizeUploadRequest: { video, uploadToken: uploadToken ?? '', uploadedPartIds: etags } }),
     });
     return { status: 'processing', state: { video: String(video) }, retryInSec: 20 };
   }
 
-  const v = await (await call('LinkedIn status', `https://api.linkedin.com/rest/videos/${encodeURIComponent(state.video ?? '')}`, {
-    headers: auth,
-  })).json();
+  const v = await (await liRest('LinkedIn status', `https://api.linkedin.com/rest/videos/${encodeURIComponent(state.video ?? '')}`, token)).json();
   if (v.status === 'PROCESSING_FAILED') throw new ApiError('LinkedIn não conseguiu processar o vídeo.', { permanent: true });
   if (v.status !== 'AVAILABLE') return { status: 'processing', state, retryInSec: 20 };
 
-  const res = await call('LinkedIn post', 'https://api.linkedin.com/rest/posts', {
+  const res = await liRest('LinkedIn post', 'https://api.linkedin.com/rest/posts', token, {
     method: 'POST',
-    headers: auth,
     body: JSON.stringify({
       author: owner,
       commentary: escapeLittleText(caption.slice(0, 3000)),

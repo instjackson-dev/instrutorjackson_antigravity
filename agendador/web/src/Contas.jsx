@@ -1,6 +1,17 @@
 import { useEffect, useState } from 'react';
 import { fmtDate, PLATFORMS, PROVIDERS, supabase } from './lib.js';
 
+// Foto da conta. no-referrer: o LinkedIn bloqueia imagens pedidas a partir de outros sites.
+// Se a foto não carregar, mostra a inicial na cor da rede.
+function Avatar({ url, name, color }) {
+  const [broken, setBroken] = useState(false);
+  if (url && !broken) {
+    return <img className="avatar" src={url} alt="" referrerPolicy="no-referrer" onError={() => setBroken(true)} />;
+  }
+  const initial = (name || '?').replace(/^@/, '').trim().charAt(0).toUpperCase();
+  return <span className="avatar avatar-fallback" style={{ background: color }}>{initial}</span>;
+}
+
 export default function Contas({ notify }) {
   const [accounts, setAccounts] = useState([]);
   const [busy, setBusy] = useState(null);
@@ -58,7 +69,7 @@ export default function Contas({ notify }) {
           return (
             <div key={a.id} className="acc row-between">
               <div className="row">
-                {a.avatar_url ? <img className="avatar" src={a.avatar_url} alt="" /> : <span className="avatar" style={{ background: p.color }} />}
+                <Avatar url={a.avatar_url} name={a.name} color={p.color} />
                 <div>
                   <b>{p.label}</b> <span className="muted">{a.name}</span>
                   <div>
