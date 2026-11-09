@@ -37,7 +37,6 @@ export default function Agendar({ notify, goTo }) {
   const [accounts, setAccounts] = useState([]);
   const [videos, setVideos] = useState([]);           // { id, file, url, duration, title, caption, when }
   const [selected, setSelected] = useState({});       // account_id -> [formatos]
-  const [custom, setCustom] = useState({});           // account_id -> legenda própria (só com 1 vídeo)
   const [start, setStart] = useState(() => toLocalInput(new Date(Date.now() + 15 * 60_000)));
   const [every, setEvery] = useState(24);
   const [progress, setProgress] = useState(null);     // { i, n, pct }
@@ -66,7 +65,7 @@ export default function Agendar({ notify, goTo }) {
     if (big.length) notify(`${big.map((f) => f.name).join(', ')}: maior que ${MAX_MB} MB. Comprima antes de enviar.`, true);
     const ok = files.filter((f) => f.size <= MAX_MB * 1024 * 1024);
     if (!ok.length) return;
-    const added = ok.map((file) => ({ id: crypto.randomUUID(), file, url: URL.createObjectURL(file), duration: null, title: '', caption: '' }));
+    const added = ok.map((file) => ({ id: crypto.randomUUID(), file, url: URL.createObjectURL(file), duration: null, title: '', caption: '', custom: {} }));
     setVideos((vs) => spread([...vs, ...added]));
     for (const v of added) readDuration(v.url).then((d) => patch(v.id, { duration: d }));
   }
@@ -101,6 +100,10 @@ export default function Agendar({ notify, goTo }) {
     (selected[a.id] || []).map((fid) => ({ account: a, fmt: FORMATS[a.platform].find((f) => f.id === fid) })),
   );
 
+  // Contas marcadas em algum formato que leva legenda (Stories não leva)
+  const captionAccounts = accounts.filter((a) =>
+    (selected[a.id] || []).some((fid) => !FORMATS[a.platform].find((f) => f.id === fid)?.noCaption));
+
   function validate(now) {
     if (!videos.length) return 'Escolha ao menos um vídeo.';
     if (!targets.length) return 'Marque ao menos um formato em alguma rede.';
@@ -110,7 +113,7 @@ export default function Agendar({ notify, goTo }) {
       for (const { account: a, fmt } of targets) {
         const problem = durationProblem(fmt, v.duration);
         if (problem) return `${name} tem ${Math.round(v.duration)} s — ${PLATFORMS[a.platform].label} ${fmt.label} aceita ${problem}. Desmarque o formato ou corte o vídeo.`;
-        const text = (single ? custom[a.id] : undefined) ?? v.caption;
+        const text = v.custom[a.id] ?? v.caption;
         const lim = PLATFORMS[a.platform].limit;
         if (!fmt.noCaption && text.length > lim) return `${name}: legenda do ${PLATFORMS[a.platform].label} passa de ${lim} caracteres.`;
       }
@@ -143,7 +146,7 @@ export default function Agendar({ notify, goTo }) {
         if (error) throw error;
 
         const { error: e2 } = await supabase.from('post_targets').insert(
-          targets.map(({ account: a, fmt }) => ({ post_id: post.id, account_id: a.id, format: fmt.id, caption: (single && custom[a.id]) || null })),
+          targets.map(({ account: a, fmt }) => ({ post_id: post.id, account_id: a.id, format: fmt.id, caption: v.custom[a.id] || null })),
         );
         if (e2) throw e2;
 
@@ -154,7 +157,6 @@ export default function Agendar({ notify, goTo }) {
       notify(now
         ? `${done > 1 ? `${done} vídeos enviados` : 'Enviado'} para publicação. Acompanhe na Fila.`
         : (done > 1 ? `${done} vídeos agendados!` : 'Vídeo agendado!'));
-      setCustom({});
       goTo('fila');
     } catch (err) {
       const msg = err.message || 'Erro ao agendar.';
@@ -214,6 +216,31 @@ export default function Agendar({ notify, goTo }) {
             <textarea value={v.caption} onChange={(e) => patch(v.id, { caption: e.target.value })} rows={4} placeholder="Texto que vai em todas as redes marcadas" />
             <div className="muted right small">{v.caption.length} caracteres · Stories não levam legenda</div>
 
+            {captionAccounts.length > 0 && (
+              <details className="per-net" open={Object.keys(v.custom).length > 0}>
+                <summary className="muted">Legenda diferente por rede {Object.keys(v.custom).length > 0 && <span className="chip info">{Object.keys(v.custom).length}</span>}</summary>
+                {captionAccounts.map((a) => {
+                  const p = PLATFORMS[a.platform];
+                  const text = v.custom[a.id] ?? v.caption;
+                  return (
+                    <div key={a.id}>
+                      <label>
+                        <span className="dot" style={{ background: p.color }} />{p.label} <small>{a.name}</small>
+                        {text.length > p.limit && <span className="chip err">{text.length}/{p.limit}</span>}
+                      </label>
+                      <textarea rows={3} value={v.custom[a.id] ?? ''} placeholder="Vazio = usa a legenda acima"
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          const next = { ...v.custom };
+                          if (val) next[a.id] = val; else delete next[a.id];
+                          patch(v.id, { custom: next });
+                        }} />
+                    </div>
+                  );
+                })}
+              </details>
+            )}
+
             {!single && (
               <>
                 <label>Data e hora deste vídeo</label>
@@ -231,8 +258,6 @@ export default function Agendar({ notify, goTo }) {
           const p = PLATFORMS[a.platform];
           const fmts = FORMATS[a.platform];
           const chosen = selected[a.id] || [];
-          const usesCaption = chosen.some((fid) => !fmts.find((f) => f.id === fid)?.noCaption);
-          const text = custom[a.id] ?? videos[0]?.caption ?? '';
           return (
             <div key={a.id} className={`acc ${a.status !== 'ok' ? 'off' : ''}`}>
               <div className="acc-head">
@@ -253,18 +278,6 @@ export default function Agendar({ notify, goTo }) {
                 })}
               </div>
               {fmts[0].hint && <div className="muted small">{fmts[0].hint}</div>}
-              {single && usesCaption && (
-                <details>
-                  <summary className="muted">Legenda própria para {p.label} {text.length > p.limit && <span className="chip err">{text.length}/{p.limit}</span>}</summary>
-                  <textarea rows={4} value={custom[a.id] ?? ''} placeholder="Deixe vazio para usar a legenda geral"
-                    onChange={(e) => {
-                      const v = e.target.value;
-                      const next = { ...custom };
-                      if (v) next[a.id] = v; else delete next[a.id];
-                      setCustom(next);
-                    }} />
-                </details>
-              )}
             </div>
           );
         })}
